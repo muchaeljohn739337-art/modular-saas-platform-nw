@@ -1,20 +1,65 @@
 globalThis.__BUILD_MANIFEST = {
   "pages": {
-    "/_app": []
+    "/": [
+      "static/chunks/fc2d32f08282fe3a.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-4be4285cd559c64f.js"
+    ],
+    "/_app": [
+      "static/chunks/6a6cfe657137a8a6.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-b0e904f391ff59b1.js"
+    ],
+    "/_error": [
+      "static/chunks/75727de435f3f52c.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-9e9f1e99666ad960.js"
+    ],
+    "/dashboard": [
+      "static/chunks/83993bb0f516903c.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-4d04b24cf3ffcf22.js"
+    ],
+    "/dashboard-backup": [
+      "static/chunks/cfe78e78ce88cc0d.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-1d0a92800eee4461.js"
+    ],
+    "/dashboard-simple": [
+      "static/chunks/3c679cb14fa13260.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-059067351055be97.js"
+    ],
+    "/index-minimal": [
+      "static/chunks/14bf1d2a70c9e6bb.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-f5e435ceb731809e.js"
+    ],
+    "/login": [
+      "static/chunks/5173557dc413ebd0.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-d6dc42a43637f488.js"
+    ],
+    "/login-simple": [
+      "static/chunks/a6af9a0c81e449ba.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-c045f37eeabb6f1a.js"
+    ],
+    "/register": [
+      "static/chunks/a50ef24d22cae66e.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-d3697a4359cea373.js"
+    ],
+    "/register-simple": [
+      "static/chunks/8ead554da9ecb2c7.js",
+      "static/chunks/d5b505cfaa23e50f.js",
+      "static/chunks/turbopack-a047f8399406e918.js"
+    ]
   },
   "devFiles": [],
-  "polyfillFiles": [
-    "static/chunks/a6dad97d9634a72d.js"
-  ],
+  "polyfillFiles": [],
   "lowPriorityFiles": [],
-  "rootMainFiles": [
-    "static/chunks/ab68f8fa70a7ea6d.js",
-    "static/chunks/cba098fafc9392b1.js",
-    "static/chunks/e906dec545da7fc3.js",
-    "static/chunks/d4edc3a802749a03.js",
-    "static/chunks/d10c02658184fb6c.js",
-    "static/chunks/turbopack-ddfe98243a3ce82a.js"
-  ]
+  "rootMainFiles": []
 };
 globalThis.__BUILD_MANIFEST.lowPriorityFiles = [
 "/static/" + process.env.__NEXT_BUILD_ID + "/_buildManifest.js",
