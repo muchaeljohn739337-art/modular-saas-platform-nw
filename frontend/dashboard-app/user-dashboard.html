@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advancia PayLedger - User Portal</title>
+    <link rel="stylesheet" href="user-styles.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Login/Register Section -->
+      <section id="authSection" class="auth-section">
+        <div class="auth-container">
+          <div class="auth-card">
+            <div class="auth-header">
+              <div class="logo">
+                <i class="fas fa-wallet"></i>
+                <h1>Advancia PayLedger</h1>
+              </div>
+              <p class="auth-subtitle">Secure Healthcare Payment Platform</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+              <h2>Welcome Back</h2>
+              <form id="loginFormElement">
+                <div class="form-group">
+                  <label for="loginEmail">Email Address</label>
+                  <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input
+                      type="email"
+                      id="loginEmail"
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="loginPassword">Password</label>
+                  <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input
+                      type="password"
+                      id="loginPassword"
+                      placeholder="Enter your password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="toggle-password"
+                      onclick="togglePassword('loginPassword')"
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-options">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="rememberMe" />
+                    <span class="checkmark"></span>
+                    Remember me
+                  </label>
+                  <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+                <button type="submit" class="auth-btn primary">Sign In</button>
+              </form>
+              <div class="auth-divider">
+                <span>or</span>
+              </div>
+              <button class="auth-btn secondary" onclick="showRegister()">
+                Create New Account
+              </button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form hidden">
+              <h2>Create Account</h2>
+              <form id="registerFormElement">
+                <div class="form-group">
+                  <label for="registerName">Full Name</label>
+                  <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input
+                      type="text"
+                      id="registerName"
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="registerEmail">Email Address</label>
+                  <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input
+                      type="email"
+                      id="registerEmail"
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="registerPassword">Password</label>
+                  <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input
+                      type="password"
+                      id="registerPassword"
+                      placeholder="Create a password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="toggle-password"
+                      onclick="togglePassword('registerPassword')"
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="confirmPassword">Confirm Password</label>
+                  <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      placeholder="Confirm your password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="toggle-password"
+                      onclick="togglePassword('confirmPassword')"
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-options">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="agreeTerms" required />
+                    <span class="checkmark"></span>
+                    I agree to the
+                    <a href="#" class="terms-link">Terms & Conditions</a>
+                  </label>
+                </div>
+                <button type="submit" class="auth-btn primary">
+                  Create Account
+                </button>
+              </form>
+              <div class="auth-divider">
+                <span>or</span>
+              </div>
+              <button class="auth-btn secondary" onclick="showLogin()">
+                Already have an account? Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Dashboard Section -->
+      <section id="dashboardSection" class="dashboard-section hidden">
+        <!-- Navigation Header -->
+        <header class="dashboard-header">
+          <div class="header-left">
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">
+              <i class="fas fa-wallet"></i>
+              <h1>PayLedger</h1>
+            </div>
+            <nav class="main-nav" id="mainNav">
+              <a href="#" class="nav-link active" data-section="overview">
+                <i class="fas fa-home"></i>
+                <span>Overview</span>
+              </a>
+              <a href="#" class="nav-link" data-section="transactions">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+              </a>
+              <a href="#" class="nav-link" data-section="wallet">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+              </a>
+              <a href="#" class="nav-link" data-section="analytics">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+              </a>
+            </nav>
+          </div>
+          <div class="header-right">
+            <div class="notifications">
+              <button class="notification-btn">
+                <i class="fas fa-bell"></i>
+                <span class="badge">3</span>
+              </button>
+            </div>
+            <div class="user-menu">
+              <button class="user-avatar-btn" onclick="toggleUserMenu()">
+                <img
+                  src="https://picsum.photos/seed/user123/40/40.jpg"
+                  alt="User"
+                  class="user-avatar"
+                />
+                <span class="user-name">John Doe</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div id="userMenu" class="user-dropdown hidden">
+                <a href="#" class="dropdown-item" data-section="profile">
+                  <i class="fas fa-user"></i>
+                  <span>Profile</span>
+                </a>
+                <a href="#" class="dropdown-item" data-section="settings">
+                  <i class="fas fa-cog"></i>
+                  <span>Settings</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item logout" onclick="logout()">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-main">
+          <!-- Overview Section -->
+          <div id="overviewSection" class="content-section active">
+            <div class="page-header">
+              <h2>Dashboard Overview</h2>
+              <p>Welcome back! Here's what's happening with your account.</p>
+            </div>
+
+            <!-- Balance Cards -->
+            <div class="balance-grid">
+              <div class="balance-card primary">
+                <div class="balance-header">
+                  <h3>Total Balance</h3>
+                  <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="balance-amount">$12,456.78</div>
+                <div class="balance-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  +12.5% this month
+                </div>
+              </div>
+              <div class="balance-card">
+                <div class="balance-header">
+                  <h3>Monthly Income</h3>
+                  <i class="fas fa-arrow-down"></i>
+                </div>
+                <div class="balance-amount">$3,234.56</div>
+                <div class="balance-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  +8.3% vs last month
+                </div>
+              </div>
+              <div class="balance-card">
+                <div class="balance-header">
+                  <h3>Monthly Expenses</h3>
+                  <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="balance-amount">$1,890.12</div>
+                <div class="balance-change negative">
+                  <i class="fas fa-arrow-up"></i>
+                  +5.2% vs last month
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+              <h3>Quick Actions</h3>
+              <div class="action-grid">
+                <button class="action-btn">
+                  <i class="fas fa-paper-plane"></i>
+                  <span>Send Money</span>
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-download"></i>
+                  <span>Receive Money</span>
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-file-invoice"></i>
+                  <span>Pay Bills</span>
+                </button>
+                <button class="action-btn">
+                  <i class="fas fa-credit-card"></i>
+                  <span>Add Card</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="recent-transactions">
+              <div class="section-header">
+                <h3>Recent Transactions</h3>
+                <a href="#" class="view-all" data-section="transactions"
+                  >View All</a
+                >
+              </div>
+              <div class="transaction-list">
+                <div class="transaction-item">
+                  <div class="transaction-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h4>Amazon Purchase</h4>
+                    <p>Online Shopping</p>
+                    <span class="transaction-time">2 hours ago</span>
+                  </div>
+                  <div class="transaction-amount negative">-$89.99</div>
+                </div>
+                <div class="transaction-item">
+                  <div class="transaction-icon">
+                    <i class="fas fa-briefcase"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h4>Salary Deposit</h4>
+                    <p>Monthly Salary</p>
+                    <span class="transaction-time">Yesterday</span>
+                  </div>
+                  <div class="transaction-amount positive">+$3,500.00</div>
+                </div>
+                <div class="transaction-item">
+                  <div class="transaction-icon">
+                    <i class="fas fa-utensils"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h4>Restaurant</h4>
+                    <p>Dinner with friends</p>
+                    <span class="transaction-time">2 days ago</span>
+                  </div>
+                  <div class="transaction-amount negative">-$45.67</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Section -->
+          <div id="profileSection" class="content-section">
+            <div class="page-header">
+              <h2>Profile Settings</h2>
+              <p>Manage your personal information and account details.</p>
+            </div>
+
+            <div class="profile-content">
+              <div class="profile-sidebar">
+                <div class="profile-avatar-section">
+                  <div class="avatar-upload">
+                    <img
+                      src="https://picsum.photos/seed/user123/120/120.jpg"
+                      alt="Profile"
+                      class="profile-avatar"
+                    />
+                    <button class="upload-btn">
+                      <i class="fas fa-camera"></i>
+                    </button>
+                  </div>
+                  <h3>John Doe</h3>
+                  <p>john.doe@example.com</p>
+                  <div class="profile-status">
+                    <span class="status-dot online"></span>
+                    <span>Active Account</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-main">
+                <div class="profile-section">
+                  <h3>Personal Information</h3>
+                  <form class="profile-form">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" value="John" />
+                      </div>
+                      <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" value="Doe" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email Address</label>
+                      <input
+                        type="email"
+                        id="email"
+                        value="john.doe@example.com"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="phone">Phone Number</label>
+                      <input type="tel" id="phone" value="+1 (555) 123-4567" />
+                    </div>
+                    <div class="form-group">
+                      <label for="address">Address</label>
+                      <input
+                        type="text"
+                        id="address"
+                        value="123 Main St, City, State 12345"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="bio">Bio</label>
+                      <textarea id="bio" rows="3">
+Healthcare professional focused on secure payment solutions.</textarea
+                      >
+                    </div>
+                    <button type="submit" class="btn primary">
+                      Save Changes
+                    </button>
+                  </form>
+                </div>
+
+                <div class="profile-section">
+                  <h3>Account Statistics</h3>
+                  <div class="stats-grid">
+                    <div class="stat-item">
+                      <div class="stat-value">156</div>
+                      <div class="stat-label">Total Transactions</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">2.5 years</div>
+                      <div class="stat-label">Account Age</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">$45,678</div>
+                      <div class="stat-label">Total Processed</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">Premium</div>
+                      <div class="stat-label">Account Type</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Section -->
+          <div id="settingsSection" class="content-section">
+            <div class="page-header">
+              <h2>Settings</h2>
+              <p>Configure your account preferences and security settings.</p>
+            </div>
+
+            <div class="settings-content">
+              <div class="settings-nav">
+                <a href="#" class="settings-nav-item active" data-tab="general">
+                  <i class="fas fa-cog"></i>
+                  General
+                </a>
+                <a href="#" class="settings-nav-item" data-tab="security">
+                  <i class="fas fa-shield-alt"></i>
+                  Security
+                </a>
+                <a href="#" class="settings-nav-item" data-tab="notifications">
+                  <i class="fas fa-bell"></i>
+                  Notifications
+                </a>
+                <a href="#" class="settings-nav-item" data-tab="privacy">
+                  <i class="fas fa-lock"></i>
+                  Privacy
+                </a>
+              </div>
+
+              <div class="settings-main">
+                <!-- General Settings -->
+                <div id="generalTab" class="settings-tab active">
+                  <h3>General Settings</h3>
+                  <form class="settings-form">
+                    <div class="form-group">
+                      <label for="language">Language</label>
+                      <select id="language">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="timezone">Timezone</label>
+                      <select id="timezone">
+                        <option value="EST">Eastern Time (EST)</option>
+                        <option value="PST">Pacific Time (PST)</option>
+                        <option value="CST">Central Time (CST)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="currency">Default Currency</label>
+                      <select id="currency">
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="GBP">GBP - British Pound</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="darkMode" />
+                        <span class="checkmark"></span>
+                        Enable Dark Mode
+                      </label>
+                    </div>
+                    <button type="submit" class="btn primary">
+                      Save Settings
+                    </button>
+                  </form>
+                </div>
+
+                <!-- Security Settings -->
+                <div id="securityTab" class="settings-tab">
+                  <h3>Security Settings</h3>
+                  <form class="settings-form">
+                    <div class="form-group">
+                      <label for="currentPassword">Current Password</label>
+                      <input type="password" id="currentPassword" />
+                    </div>
+                    <div class="form-group">
+                      <label for="newPassword">New Password</label>
+                      <input type="password" id="newPassword" />
+                    </div>
+                    <div class="form-group">
+                      <label for="confirmNewPassword"
+                        >Confirm New Password</label
+                      >
+                      <input type="password" id="confirmNewPassword" />
+                    </div>
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="twoFactor" />
+                        <span class="checkmark"></span>
+                        Enable Two-Factor Authentication
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="emailAlerts" checked />
+                        <span class="checkmark"></span>
+                        Email alerts for login attempts
+                      </label>
+                    </div>
+                    <button type="submit" class="btn primary">
+                      Update Security
+                    </button>
+                  </form>
+                </div>
+
+                <!-- Notification Settings -->
+                <div id="notificationsTab" class="settings-tab">
+                  <h3>Notification Preferences</h3>
+                  <form class="settings-form">
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="emailNotifications"
+                          checked
+                        />
+                        <span class="checkmark"></span>
+                        Email Notifications
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="pushNotifications" checked />
+                        <span class="checkmark"></span>
+                        Push Notifications
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="smsNotifications" />
+                        <span class="checkmark"></span>
+                        SMS Notifications
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label for="notificationFrequency"
+                        >Notification Frequency</label
+                      >
+                      <select id="notificationFrequency">
+                        <option value="realtime">Real-time</option>
+                        <option value="daily">Daily Digest</option>
+                        <option value="weekly">Weekly Summary</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn primary">
+                      Save Preferences
+                    </button>
+                  </form>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div id="privacyTab" class="settings-tab">
+                  <h3>Privacy Settings</h3>
+                  <form class="settings-form">
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="profileVisibility" checked />
+                        <span class="checkmark"></span>
+                        Make profile visible to other users
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="dataSharing" />
+                        <span class="checkmark"></span>
+                        Share anonymous usage data
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="marketingEmails" />
+                        <span class="checkmark"></span>
+                        Receive marketing emails
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label for="dataRetention">Data Retention Period</label>
+                      <select id="dataRetention">
+                        <option value="1year">1 Year</option>
+                        <option value="2years">2 Years</option>
+                        <option value="5years">5 Years</option>
+                        <option value="permanent">Permanent</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn primary">
+                      Update Privacy
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other sections (Transactions, Wallet, Analytics) would go here -->
+          <div id="transactionsSection" class="content-section">
+            <div class="page-header">
+              <h2>Transactions</h2>
+              <p>View and manage your transaction history.</p>
+            </div>
+
+            <!-- Transaction Filters -->
+            <div class="transaction-filters">
+              <div class="filter-group">
+                <select id="transactionFilter">
+                  <option value="all">All Transactions</option>
+                  <option value="income">Income</option>
+                  <option value="expenses">Expenses</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <input type="date" id="dateFrom" placeholder="From" />
+              </div>
+              <div class="filter-group">
+                <input type="date" id="dateTo" placeholder="To" />
+              </div>
+              <div class="filter-group">
+                <input
+                  type="text"
+                  id="searchTransaction"
+                  placeholder="Search transactions..."
+                />
+              </div>
+              <button class="btn primary" onclick="filterTransactions()">
+                <i class="fas fa-filter"></i> Apply Filters
+              </button>
+            </div>
+
+            <!-- Transaction Summary -->
+            <div class="transaction-summary">
+              <div class="summary-card">
+                <h4>Total Income</h4>
+                <div class="summary-amount positive">$8,234.56</div>
+              </div>
+              <div class="summary-card">
+                <h4>Total Expenses</h4>
+                <div class="summary-amount negative">$3,456.78</div>
+              </div>
+              <div class="summary-card">
+                <h4>Net Balance</h4>
+                <div class="summary-amount">$4,777.78</div>
+              </div>
+            </div>
+
+            <!-- Transactions List -->
+            <div class="transactions-container">
+              <div class="transaction-list">
+                <div class="transaction-item">
+                  <div class="transaction-icon income">
+                    <i class="fas fa-briefcase"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h4>Monthly Salary</h4>
+                    <p>Direct Deposit • ACME Corporation</p>
+                    <span class="transaction-time">Feb 1, 2024 • 9:00 AM</span>
+                  </div>
+                  <div class="transaction-amount positive">+$3,500.00</div>
+                </div>
+
+                <div class="transaction-item">
+                  <div class="transaction-icon expense">
+                    <i class="fas fa-shopping-cart"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h4>Walmart</h4>
+                    <p>Groceries • Debit Card</p>
+                    <span class="transaction-time">Feb 15, 2024 • 6:30 PM</span>
+                  </div>
+                  <div class="transaction-amount negative">-$156.78</div>
+                </div>
+
+                <div class="transaction-item">
+                  <div class="transaction-icon expense">
+                    <i class="fas fa-gas-pump"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h4>Shell Gas Station</h4>
+                    <p>Transportation • Credit Card</p>
+                    <span class="transaction-time">Feb 14, 2024 • 8:15 AM</span>
+                  </div>
+                  <div class="transaction-amount negative">-$45.00</div>
+                </div>
+
+                <div class="transaction-item pending">
+                  <div class="transaction-icon pending">
+                    <i class="fas fa-clock"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h4>Netflix Subscription</h4>
+                    <p>Entertainment • Auto-pay</p>
+                    <span class="transaction-time">Feb 16, 2024 • Pending</span>
+                  </div>
+                  <div class="transaction-amount pending">-$15.99</div>
+                </div>
+
+                <div class="transaction-item">
+                  <div class="transaction-icon income">
+                    <i class="fas fa-exchange-alt"></i>
+                  </div>
+                  <div class="transaction-details">
+                    <h4>Transfer from John</h4>
+                    <p>Peer Transfer • Bank Transfer</p>
+                    <span class="transaction-time">Feb 13, 2024 • 2:30 PM</span>
+                  </div>
+                  <div class="transaction-amount positive">+$250.00</div>
+                </div>
+              </div>
+
+              <!-- Pagination -->
+              <div class="pagination">
+                <button class="page-btn" disabled>
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="walletSection" class="content-section">
+            <div class="page-header">
+              <h2>Wallet</h2>
+              <p>Manage your payment methods and wallet balance.</p>
+            </div>
+
+            <!-- Wallet Balance Card -->
+            <div class="wallet-balance-card">
+              <div class="balance-header">
+                <h3>Total Wallet Balance</h3>
+                <button class="btn primary" onclick="showAddFundsModal()">
+                  <i class="fas fa-plus"></i> Add Funds
+                </button>
+              </div>
+              <div class="wallet-amount">$12,456.78</div>
+              <div class="balance-breakdown">
+                <div class="balance-item">
+                  <span>Available Balance</span>
+                  <span class="available">$10,456.78</span>
+                </div>
+                <div class="balance-item">
+                  <span>Pending Holds</span>
+                  <span class="pending">$2,000.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-methods">
+              <div class="section-header">
+                <h3>Payment Methods</h3>
+                <button class="btn secondary" onclick="showAddCardModal()">
+                  <i class="fas fa-plus"></i> Add Card
+                </button>
+              </div>
+
+              <div class="cards-grid">
+                <div class="payment-card primary">
+                  <div class="card-type">
+                    <i class="fab fa-cc-visa"></i>
+                    <span>Visa</span>
+                  </div>
+                  <div class="card-number">•••• •••• •••• 4532</div>
+                  <div class="card-details">
+                    <div class="card-holder">John Doe</div>
+                    <div class="card-expiry">12/25</div>
+                  </div>
+                  <div class="card-actions">
+                    <button class="card-btn" title="Set as default">
+                      <i class="fas fa-star"></i>
+                    </button>
+                    <button class="card-btn" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="card-btn" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="payment-card">
+                  <div class="card-type">
+                    <i class="fab fa-cc-mastercard"></i>
+                    <span>Mastercard</span>
+                  </div>
+                  <div class="card-number">•••• •••• •••• 8765</div>
+                  <div class="card-details">
+                    <div class="card-holder">John Doe</div>
+                    <div class="card-expiry">09/24</div>
+                  </div>
+                  <div class="card-actions">
+                    <button class="card-btn" title="Set as default">
+                      <i class="far fa-star"></i>
+                    </button>
+                    <button class="card-btn" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="card-btn" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="payment-card">
+                  <div class="card-type">
+                    <i class="fab fa-cc-amex"></i>
+                    <span>American Express</span>
+                  </div>
+                  <div class="card-number">•••• •••• ••• 3742</div>
+                  <div class="card-details">
+                    <div class="card-holder">John Doe</div>
+                    <div class="card-expiry">06/26</div>
+                  </div>
+                  <div class="card-actions">
+                    <button class="card-btn" title="Set as default">
+                      <i class="far fa-star"></i>
+                    </button>
+                    <button class="card-btn" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="card-btn" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="add-card-btn" onclick="showAddCardModal()">
+                  <i class="fas fa-plus"></i>
+                  <span>Add New Card</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bank Accounts -->
+            <div class="bank-accounts">
+              <div class="section-header">
+                <h3>Bank Accounts</h3>
+                <button class="btn secondary" onclick="showAddBankModal()">
+                  <i class="fas fa-plus"></i> Add Bank
+                </button>
+              </div>
+
+              <div class="bank-list">
+                <div class="bank-item">
+                  <div class="bank-icon">
+                    <i class="fas fa-university"></i>
+                  </div>
+                  <div class="bank-details">
+                    <h4>Chase Checking</h4>
+                    <p>Account ending in 7890</p>
+                  </div>
+                  <div class="bank-status">
+                    <span class="status-dot online"></span>
+                    <span>Connected</span>
+                  </div>
+                  <button class="bank-btn">
+                    <i class="fas fa-ellipsis-v"></i>
+                  </button>
+                </div>
+
+                <div class="bank-item">
+                  <div class="bank-icon">
+                    <i class="fas fa-piggy-bank"></i>
+                  </div>
+                  <div class="bank-details">
+                    <h4>Bank of America Savings</h4>
+                    <p>Account ending in 2345</p>
+                  </div>
+                  <div class="bank-status">
+                    <span class="status-dot online"></span>
+                    <span>Connected</span>
+                  </div>
+                  <button class="bank-btn">
+                    <i class="fas fa-ellipsis-v"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Wallet Activity -->
+            <div class="wallet-activity">
+              <h3>Recent Wallet Activity</h3>
+              <div class="activity-list">
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <i class="fas fa-arrow-down"></i>
+                  </div>
+                  <div class="activity-details">
+                    <h4>Funds Added</h4>
+                    <p>From Chase Checking •••• 7890</p>
+                    <span class="activity-time">2 days ago</span>
+                  </div>
+                  <div class="activity-amount positive">+$500.00</div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <i class="fas fa-arrow-up"></i>
+                  </div>
+                  <div class="activity-details">
+                    <h4>Payment Sent</h4>
+                    <p>To Sarah Miller • Wallet Transfer</p>
+                    <span class="activity-time">3 days ago</span>
+                  </div>
+                  <div class="activity-amount negative">-$75.00</div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <i class="fas fa-credit-card"></i>
+                  </div>
+                  <div class="activity-details">
+                    <h4>Card Added</h4>
+                    <p>Visa ending in 4532</p>
+                    <span class="activity-time">1 week ago</span>
+                  </div>
+                  <div class="activity-amount neutral">
+                    <i class="fas fa-check"></i> Verified
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="analyticsSection" class="content-section">
+            <div class="page-header">
+              <h2>Analytics</h2>
+              <p>View detailed analytics and insights about your account.</p>
+            </div>
+
+            <!-- Analytics Period Selector -->
+            <div class="analytics-controls">
+              <div class="period-selector">
+                <button class="period-btn active" data-period="week">
+                  Week
+                </button>
+                <button class="period-btn" data-period="month">Month</button>
+                <button class="period-btn" data-period="quarter">
+                  Quarter
+                </button>
+                <button class="period-btn" data-period="year">Year</button>
+              </div>
+              <div class="export-controls">
+                <button class="btn secondary" onclick="exportAnalytics()">
+                  <i class="fas fa-download"></i> Export Report
+                </button>
+              </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="analytics-metrics">
+              <div class="metric-card">
+                <div class="metric-header">
+                  <h4>Total Spent</h4>
+                  <i class="fas fa-arrow-up metric-icon expense"></i>
+                </div>
+                <div class="metric-value">$3,456.78</div>
+                <div class="metric-change negative">+12.3% vs last period</div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-header">
+                  <h4>Total Received</h4>
+                  <i class="fas fa-arrow-down metric-icon income"></i>
+                </div>
+                <div class="metric-value">$8,234.56</div>
+                <div class="metric-change positive">+8.7% vs last period</div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-header">
+                  <h4>Transactions</h4>
+                  <i class="fas fa-exchange-alt metric-icon"></i>
+                </div>
+                <div class="metric-value">142</div>
+                <div class="metric-change positive">+5.2% vs last period</div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-header">
+                  <h4>Average Transaction</h4>
+                  <i class="fas fa-chart-line metric-icon"></i>
+                </div>
+                <div class="metric-value">$82.45</div>
+                <div class="metric-change negative">-3.1% vs last period</div>
+              </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+              <div class="chart-container">
+                <div class="chart-header">
+                  <h3>Spending Overview</h3>
+                  <div class="chart-controls">
+                    <button class="chart-btn active" data-chart="line">
+                      Line
+                    </button>
+                    <button class="chart-btn" data-chart="bar">Bar</button>
+                  </div>
+                </div>
+                <div class="chart-content">
+                  <canvas id="spendingChart" width="400" height="200"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-container">
+                <div class="chart-header">
+                  <h3>Category Breakdown</h3>
+                  <div class="chart-controls">
+                    <button class="chart-btn active" data-chart="pie">
+                      Pie
+                    </button>
+                    <button class="chart-btn" data-chart="doughnut">
+                      Doughnut
+                    </button>
+                  </div>
+                </div>
+                <div class="chart-content">
+                  <canvas id="categoryChart" width="400" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Spending Categories -->
+            <div class="spending-categories">
+              <h3>Spending by Category</h3>
+              <div class="category-list">
+                <div class="category-item">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="category-details">
+                      <h4>Groceries</h4>
+                      <p>45 transactions</p>
+                    </div>
+                  </div>
+                  <div class="category-amount">$1,234.56</div>
+                  <div class="category-percentage">35.7%</div>
+                </div>
+
+                <div class="category-item">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-gas-pump"></i>
+                    </div>
+                    <div class="category-details">
+                      <h4>Transportation</h4>
+                      <p>23 transactions</p>
+                    </div>
+                  </div>
+                  <div class="category-amount">$567.89</div>
+                  <div class="category-percentage">16.4%</div>
+                </div>
+
+                <div class="category-item">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="category-details">
+                      <h4>Dining</h4>
+                      <p>31 transactions</p>
+                    </div>
+                  </div>
+                  <div class="category-amount">$456.78</div>
+                  <div class="category-percentage">13.2%</div>
+                </div>
+
+                <div class="category-item">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-tv"></i>
+                    </div>
+                    <div class="category-details">
+                      <h4>Entertainment</h4>
+                      <p>12 transactions</p>
+                    </div>
+                  </div>
+                  <div class="category-amount">$234.00</div>
+                  <div class="category-percentage">6.8%</div>
+                </div>
+
+                <div class="category-item">
+                  <div class="category-info">
+                    <div class="category-icon">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                    <div class="category-details">
+                      <h4>Other</h4>
+                      <p>31 transactions</p>
+                    </div>
+                  </div>
+                  <div class="category-amount">$963.55</div>
+                  <div class="category-percentage">27.9%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Insights Section -->
+            <div class="insights-section">
+              <h3>Financial Insights</h3>
+              <div class="insights-grid">
+                <div class="insight-card">
+                  <div class="insight-icon">
+                    <i class="fas fa-lightbulb"></i>
+                  </div>
+                  <div class="insight-content">
+                    <h4>Spending Trend</h4>
+                    <p>
+                      Your grocery spending increased by 15% this month.
+                      Consider meal planning to reduce costs.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="insight-card">
+                  <div class="insight-icon">
+                    <i class="fas fa-piggy-bank"></i>
+                  </div>
+                  <div class="insight-content">
+                    <h4>Savings Opportunity</h4>
+                    <p>
+                      You could save $150/month by reducing dining out expenses
+                      by 30%.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="insight-card">
+                  <div class="insight-icon">
+                    <i class="fas fa-chart-line"></i>
+                  </div>
+                  <div class="insight-content">
+                    <h4>Budget Alert</h4>
+                    <p>
+                      You've used 85% of your monthly budget. 5 days remaining
+                      in the period.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <script src="user-dashboard.js"></script>
+  </body>
+</html>

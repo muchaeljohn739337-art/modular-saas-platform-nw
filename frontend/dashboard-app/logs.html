@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs - Advancia PayLedger</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Advancia PayLedger</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="metrics.html"><i class="fas fa-chart-line"></i> Metrics</a></li>
+                <li><a href="logs.html" class="active"><i class="fas fa-file-alt"></i> Logs</a></li>
+                <li><a href="api-explorer.html"><i class="fas fa-code"></i> API Explorer</a></li>
+                <li><a href="web3-explorer.html"><i class="fas fa-cube"></i> Web3 Explorer</a></li>
+                <li><a href="agent-runner.html"><i class="fas fa-robot"></i> Agent Runner</a></li>
+                <li><a href="deployments.html"><i class="fas fa-server"></i> Deployments</a></li>
+                <li><a href="compliance.html"><i class="fas fa-shield-alt"></i> Compliance</a></li>
+                <li><a href="audit-logs.html"><i class="fas fa-clipboard-check"></i> Audit Logs</a></li>
+                <li><a href="support.html"><i class="fas fa-headset"></i> Support</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>System Logs</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="user-name">Admin User</span>
+                        <div class="user-avatar">A</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Logs Content -->
+            <div class="logs-container">
+                <!-- Log Controls -->
+                <div class="log-controls">
+                    <div class="control-group">
+                        <label for="logLevel">Log Level:</label>
+                        <select id="logLevel">
+                            <option value="all">All Levels</option>
+                            <option value="error">Error</option>
+                            <option value="warn">Warning</option>
+                            <option value="info">Info</option>
+                            <option value="debug">Debug</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="service">Service:</label>
+                        <select id="service">
+                            <option value="all">All Services</option>
+                            <option value="api-gateway">API Gateway</option>
+                            <option value="auth-service">Auth Service</option>
+                            <option value="payment-service">Payment Service</option>
+                            <option value="wallet-service">Wallet Service</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="timeRange">Time Range:</label>
+                        <select id="timeRange">
+                            <option value="1h">Last Hour</option>
+                            <option value="6h">Last 6 Hours</option>
+                            <option value="24h">Last 24 Hours</option>
+                            <option value="7d">Last 7 Days</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <input type="text" id="searchInput" placeholder="Search logs...">
+                        <button id="searchBtn"><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                    <div class="control-actions">
+                        <button id="refreshBtn" class="btn-primary"><i class="fas fa-sync-alt"></i> Refresh</button>
+                        <button id="exportBtn" class="btn-secondary"><i class="fas fa-download"></i> Export</button>
+                    </div>
+                </div>
+
+                <!-- Log Statistics -->
+                <div class="log-stats">
+                    <div class="stat-card error">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <div class="stat-value">23</div>
+                            <div class="stat-label">Errors</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <div class="stat-value">156</div>
+                            <div class="stat-label">Warnings</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card info">
+                        <div class="stat-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <div class="stat-value">3,421</div>
+                            <div class="stat-label">Info</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card debug">
+                        <div class="stat-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="stat-details">
+                            <div class="stat-value">892</div>
+                            <div class="stat-label">Debug</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Log Entries -->
+                <div class="log-entries">
+                    <div class="log-entry error">
+                        <div class="log-header">
+                            <span class="log-timestamp">2024-02-16 10:45:23</span>
+                            <span class="log-level error">ERROR</span>
+                            <span class="log-service">payment-service</span>
+                            <span class="log-source">PaymentProcessor.java:142</span>
+                        </div>
+                        <div class="log-message">
+                            Failed to process payment transaction: Connection timeout to payment gateway
+                        </div>
+                        <div class="log-details">
+                            <div class="log-stack-trace">
+                                <pre>at PaymentProcessor.processTransaction(PaymentProcessor.java:142)
+at PaymentController.process(PaymentController.java:67)
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="log-entry warning">
+                        <div class="log-header">
+                            <span class="log-timestamp">2024-02-16 10:44:15</span>
+                            <span class="log-level warning">WARN</span>
+                            <span class="log-service">auth-service</span>
+                            <span class="log-source">AuthMiddleware.java:89</span>
+                        </div>
+                        <div class="log-message">
+                            Rate limit threshold approaching for user ID: 12345 (95/100 requests)
+                        </div>
+                    </div>
+
+                    <div class="log-entry info">
+                        <div class="log-header">
+                            <span class="log-timestamp">2024-02-16 10:43:42</span>
+                            <span class="log-level info">INFO</span>
+                            <span class="log-service">api-gateway</span>
+                            <span class="log-source">GatewayService.java:234</span>
+                        </div>
+                        <div class="log-message">
+                            New deployment completed successfully - Version 2.3.1
+                        </div>
+                    </div>
+
+                    <div class="log-entry debug">
+                        <div class="log-header">
+                            <span class="log-timestamp">2024-02-16 10:42:18</span>
+                            <span class="log-level debug">DEBUG</span>
+                            <span class="log-service">wallet-service</span>
+                            <span class="log-source">WalletRepository.java:156</span>
+                        </div>
+                        <div class="log-message">
+                            Database query executed: SELECT * FROM wallets WHERE user_id = ? LIMIT 1
+                        </div>
+                    </div>
+
+                    <div class="log-entry info">
+                        <div class="log-header">
+                            <span class="log-timestamp">2024-02-16 10:41:55</span>
+                            <span class="log-level info">INFO</span>
+                            <span class="log-service">payment-service</span>
+                            <span class="log-source">TransactionService.java:78</span>
+                        </div>
+                        <div class="log-message">
+                            Transaction completed successfully: TXN-2024-02-16-001234
+                        </div>
+                    </div>
+
+                    <div class="log-entry error">
+                        <div class="log-header">
+                            <span class="log-timestamp">2024-02-16 10:40:12</span>
+                            <span class="log-level error">ERROR</span>
+                            <span class="log-service">database</span>
+                            <span class="log-source">ConnectionPool.java:45</span>
+                        </div>
+                        <div class="log-message">
+                            Database connection pool exhausted - Unable to acquire connection within timeout
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">...</button>
+                    <button class="page-btn">42</button>
+                    <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="logs.js"></script>
+</body>
+</html>

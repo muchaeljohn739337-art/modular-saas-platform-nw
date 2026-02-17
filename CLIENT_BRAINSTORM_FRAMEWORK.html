@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Brainstorm Framework - Advancia Pay Ledger</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+            overflow-x: auto;
+        }
+        
+        .tab {
+            padding: 20px 30px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -3px;
+            white-space: nowrap;
+        }
+        
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .section h3 {
+            color: #495057;
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+        }
+        
+        .card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .timeline {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .time {
+            font-weight: 700;
+            color: #667eea;
+            min-width: 100px;
+            font-size: 1.1em;
+        }
+        
+        .activity {
+            flex: 1;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .tip {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .tip strong {
+            color: #28a745;
+        }
+        
+        .exercise {
+            background: white;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .checklist li {
+            padding: 10px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+        
+        .checklist li:hover {
+            background: #e9ecef;
+        }
+        
+        .checklist li::before {
+            content: "□ ";
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 10px 10px 10px 0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .tab {
+                padding: 15px 20px;
+                font-size: 1em;
+            }
+            
+            .timeline-item {
+                flex-direction: column;
+            }
+            
+            .time {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Client Brainstorm Framework</h1>
+            <p>Strategic session planning for Advancia Pay Ledger</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('investors')">💼 Investors</button>
+            <button class="tab" onclick="showTab('facilities')">🏥 Healthcare Facilities</button>
+            <button class="tab" onclick="showTab('partners')">🤝 Partners</button>
+            <button class="tab" onclick="showTab('general')">⚡ Quick Framework</button>
+        </div>
+        
+        <div class="content">
+            <!-- INVESTORS TAB -->
+            <div id="investors" class="tab-content active">
+                <div class="section">
+                    <h2>Investor Brainstorm Session</h2>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">Use this for VCs, angels, or potential seed round participants. Focus: traction, vision, and strategic guidance.</p>
+                    
+                    <div class="timeline">
+                        <h3>60-Minute Session Flow</h3>
+                        <div class="timeline-item">
+                            <div class="time">0-10 min</div>
+                            <div class="activity">
+                                <strong>Opening & Context Setting</strong>
+                                <ul>
+                                    <li>Quick traction snapshot ($247K MRR, 24 facilities, 42% MoM growth)</li>
+                                    <li>Round status: $1.5M seed at $8M post-money</li>
+                                    <li>Set the tone: "We'd love your strategic input on..."</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">10-25 min</div>
+                            <div class="activity">
+                                <strong>Deep Dive Discussion</strong>
+                                <ul>
+                                    <li>Market positioning & competitive landscape</li>
+                                    <li>Go-to-market strategy optimization</li>
+                                    <li>Product roadmap priorities</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">25-45 min</div>
+                            <div class="activity">
+                                <strong>Interactive Exercises (Choose 2-3)</strong>
+                                <ul>
+                                    <li>Use exercises from section below</li>
+                                    <li>Capture insights in real-time</li>
+                                    <li>Ask clarifying questions</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">45-55 min</div>
+                            <div class="activity">
+                                <strong>Strategic Priorities</strong>
+                                <ul>
+                                    <li>What would move the needle most in next 6 months?</li>
+                                    <li>Biggest risks to address?</li>
+                                    <li>Team/hire priorities?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">55-60 min</div>
+                            <div class="activity">
+                                <strong>Next Steps & Close</strong>
+                                <ul>
+                                    <li>Summarize key insights</li>
+                                    <li>Align on follow-ups</li>
+                                    <li>Timeline for next conversation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Brainstorm Prompts</h3>
+                    
+                    <div class="card">
+                        <h4>🎯 Market Positioning Exercise</h4>
+                        <p><strong>Prompt:</strong> "If you had to describe Advancia Pay Ledger to another investor in one sentence, what would make them lean forward?"</p>
+                        <p><strong>Follow-up:</strong> "What's our strongest competitive moat? Where are we most vulnerable?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>📊 Traction Multiplier Exercise</h4>
+                        <p><strong>Prompt:</strong> "We're at $247K MRR with 24 facilities. What's the fastest path to 3x that in 6 months?"</p>
+                        <p><strong>Follow-up:</strong> "What would you need to see to believe we can get there?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>🚀 Fundraising Strategy</h4>
+                        <p><strong>Prompt:</strong> "Based on what you're seeing in the market, how should we position this $1.5M seed round?"</p>
+                        <p><strong>Follow-up:</strong> "Who else should we be talking to? What objections should we prepare for?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>🏗️ Roadmap Priority Setting</h4>
+                        <p><strong>Prompt:</strong> "We have crypto + traditional payment processing. What's the most important feature we're NOT building?"</p>
+                        <p><strong>Follow-up:</strong> "What would make this a $100M+ company?"</p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Capture Template</h3>
+                    <div class="exercise">
+                        <strong>Document These During Session:</strong>
+                        <ul class="checklist">
+                            <li>Key market insights shared</li>
+                            <li>Suggested introductions/connections</li>
+                            <li>Red flags or concerns raised</li>
+                            <li>Specific metrics they want to see</li>
+                            <li>Timeline expectations for investment decision</li>
+                            <li>Follow-up materials they requested</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tip">
+                    <strong>💡 Pro Tip:</strong> Send a follow-up email within 24 hours summarizing their key insights and how you're incorporating their feedback. Include specific next steps with dates.
+                </div>
+            </div>
+            
+            <!-- HEALTHCARE FACILITIES TAB -->
+            <div id="facilities" class="tab-content">
+                <div class="section">
+                    <h2>Healthcare Facility Client Session</h2>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">Use this for existing or prospective healthcare facility customers. Focus: pain points, features, and optimization.</p>
+                    
+                    <div class="timeline">
+                        <h3>60-Minute Session Flow</h3>
+                        <div class="timeline-item">
+                            <div class="time">0-10 min</div>
+                            <div class="activity">
+                                <strong>Warm-Up & Current State</strong>
+                                <ul>
+                                    <li>How's the platform working for you currently?</li>
+                                    <li>What's working really well?</li>
+                                    <li>What's frustrating or could be better?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">10-30 min</div>
+                            <div class="activity">
+                                <strong>Pain Point Deep Dive</strong>
+                                <ul>
+                                    <li>Walk through their biggest operational challenges</li>
+                                    <li>Payment processing bottlenecks</li>
+                                    <li>Staff workflow issues</li>
+                                    <li>Patient experience gaps</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">30-50 min</div>
+                            <div class="activity">
+                                <strong>Collaborative Ideation (Choose 2-3 exercises)</strong>
+                                <ul>
+                                    <li>Feature prioritization exercise</li>
+                                    <li>Workflow mapping session</li>
+                                    <li>Dream feature brainstorm</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">50-60 min</div>
+                            <div class="activity">
+                                <strong>Action Items & Timeline</strong>
+                                <ul>
+                                    <li>Prioritize top 3 improvements</li>
+                                    <li>Set realistic timelines</li>
+                                    <li>Confirm next check-in</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Brainstorm Prompts</h3>
+                    
+                    <div class="card">
+                        <h4>💡 Current Workflow Analysis</h4>
+                        <p><strong>Prompt:</strong> "Walk me through your payment collection process from patient arrival to funds in your account."</p>
+                        <p><strong>Follow-up:</strong> "Where do things typically slow down or break? What's the most manual part?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>🎨 Dream Feature Exercise</h4>
+                        <p><strong>Prompt:</strong> "If you had a magic wand and could add any feature to the platform, what would save your team the most time?"</p>
+                        <p><strong>Follow-up:</strong> "How many hours per week would that save? What would your team do with that time?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>📱 Patient Experience Focus</h4>
+                        <p><strong>Prompt:</strong> "When patients use our system to pay, what do they say? What confuses them?"</p>
+                        <p><strong>Follow-up:</strong> "What would make patients more likely to pay upfront or use payment plans?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>🔄 Integration Opportunities</h4>
+                        <p><strong>Prompt:</strong> "What other systems do you use daily that should talk to our platform?"</p>
+                        <p><strong>Follow-up:</strong> "What's your biggest data entry headache right now?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>💰 Crypto Adoption Exploration</h4>
+                        <p><strong>Prompt:</strong> "Have any patients asked about paying with crypto? Would you be interested in offering it?"</p>
+                        <p><strong>Follow-up:</strong> "What would make you feel comfortable accepting crypto payments?"</p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Feature Prioritization Exercise</h3>
+                    <div class="exercise">
+                        <p><strong>Activity:</strong> Have them rank potential features using this framework:</p>
+                        <ul>
+                            <li><span class="highlight">Must Have</span> - Can't operate effectively without it</li>
+                            <li><span class="highlight">High Value</span> - Would significantly improve operations</li>
+                            <li><span class="highlight">Nice to Have</span> - Would use it but not critical</li>
+                            <li><span class="highlight">Low Priority</span> - Interesting but not needed now</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Then discuss:</strong> What's blocking their #1 "Must Have" from being built?</p>
+                    </div>
+                </div>
+                
+                <div class="tip">
+                    <strong>💡 Pro Tip:</strong> Record (with permission) which specific features they mention most passionately. These are your highest-impact development targets and great testimonial opportunities.
+                </div>
+            </div>
+            
+            <!-- PARTNERS TAB -->
+            <div id="partners" class="tab-content">
+                <div class="section">
+                    <h2>Strategic Partner Brainstorm</h2>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">Use this for potential integration partners, distribution partners, or strategic collaborators.</p>
+                    
+                    <div class="timeline">
+                        <h3>60-Minute Session Flow</h3>
+                        <div class="timeline-item">
+                            <div class="time">0-15 min</div>
+                            <div class="activity">
+                                <strong>Mutual Value Discovery</strong>
+                                <ul>
+                                    <li>What brings us together? What's the opportunity?</li>
+                                    <li>Their current challenges/gaps</li>
+                                    <li>Our capabilities that complement theirs</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">15-35 min</div>
+                            <div class="activity">
+                                <strong>Partnership Model Exploration</strong>
+                                <ul>
+                                    <li>Integration partnership possibilities</li>
+                                    <li>Co-selling opportunities</li>
+                                    <li>Referral relationship structure</li>
+                                    <li>Technology licensing</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">35-50 min</div>
+                            <div class="activity">
+                                <strong>Collaborative Ideation (Choose 2-3)</strong>
+                                <ul>
+                                    <li>Use exercises from section below</li>
+                                    <li>Map out integration touchpoints</li>
+                                    <li>Identify quick wins</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="time">50-60 min</div>
+                            <div class="activity">
+                                <strong>Partnership Roadmap</strong>
+                                <ul>
+                                    <li>Phase 1: Quick pilot/proof of concept</li>
+                                    <li>Success metrics for partnership</li>
+                                    <li>Resource commitments needed</li>
+                                    <li>Next steps and timeline</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Brainstorm Prompts</h3>
+                    
+                    <div class="card">
+                        <h4>🤝 Value Alignment Exercise</h4>
+                        <p><strong>Prompt:</strong> "What problem are your customers facing that our platform could help solve?"</p>
+                        <p><strong>Follow-up:</strong> "What would success look like if we partnered? How would we measure it?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>🔗 Integration Mapping</h4>
+                        <p><strong>Prompt:</strong> "Walk me through your current tech stack. Where does payment processing fit?"</p>
+                        <p><strong>Follow-up:</strong> "If we integrated with your platform, what data should flow between our systems?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>🎯 Go-to-Market Strategy</h4>
+                        <p><strong>Prompt:</strong> "How do you currently sell to healthcare facilities? What's working?"</p>
+                        <p><strong>Follow-up:</strong> "Could we co-market to your customer base? What would that look like?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>💡 Quick Win Identification</h4>
+                        <p><strong>Prompt:</strong> "What's the fastest, smallest thing we could build together to prove value?"</p>
+                        <p><strong>Follow-up:</strong> "Who would be a good beta customer from your network?"</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>🚀 Scale Planning</h4>
+                        <p><strong>Prompt:</strong> "If this partnership works, what could it look like in 12 months?"</p>
+                        <p><strong>Follow-up:</strong> "What resources would we each need to commit to get there?"</p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Partnership Framework Exercise</h3>
+                    <div class="exercise">
+                        <p><strong>Activity:</strong> Map out potential partnership models together:</p>
+                        <ol>
+                            <li><strong>Integration Partner</strong> - Technical API integration (what data flows where?)</li>
+                            <li><strong>Referral Partner</strong> - Mutual customer referrals (what's the commission structure?)</li>
+                            <li><strong>Co-Sell Partner</strong> - Joint go-to-market (how do we split deals?)</li>
+                            <li><strong>Technology Partner</strong> - White-label or licensing (what's the pricing model?)</li>
+                        </ol>
+                        <p style="margin-top: 15px;"><strong>For each model, discuss:</strong></p>
+                        <ul>
+                            <li>What's required from each side?</li>
+                            <li>What's the timeline to launch?</li>
+                            <li>How do we share revenue/value?</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tip">
+                    <strong>💡 Pro Tip:</strong> Start with a small pilot project before committing to a large partnership. Define 30-day and 90-day milestones to ensure alignment and momentum.
+                </div>
+            </div>
+            
+            <!-- GENERAL FRAMEWORK TAB -->
+            <div id="general" class="tab-content">
+                <div class="section">
+                    <h2>Universal Brainstorm Framework</h2>
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">A flexible structure that works for any client conversation when you need to adapt on the fly.</p>
+                </div>
+                
+                <div class="section">
+                    <h3>The 5-Part Structure</h3>
+                    
+                    <div class="card">
+                        <h4>1️⃣ Opening (10 min) - Set the Stage</h4>
+                        <ul>
+                            <li>Thank them for their time</li>
+                            <li>State the goal: "We'd love to get your input on..."</li>
+                            <li>Give them context on where you are today</li>
+                            <li>Ask: "What questions do you have before we dive in?"</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>2️⃣ Discovery (15 min) - Understand Their Perspective</h4>
+                        <ul>
+                            <li>What's top of mind for them right now?</li>
+                            <li>What challenges are they facing?</li>
+                            <li>What's working well in their world?</li>
+                            <li>What gaps or opportunities do they see?</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>3️⃣ Ideation (25 min) - Collaborative Problem-Solving</h4>
+                        <ul>
+                            <li>Choose 2-3 exercises based on conversation flow</li>
+                            <li>Encourage wild ideas - build on everything</li>
+                            <li>Ask "what if" questions</li>
+                            <li>Capture all ideas without judgment</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>4️⃣ Prioritization (8 min) - Focus on What Matters</h4>
+                        <ul>
+                            <li>"Of everything we discussed, what's most important?"</li>
+                            <li>"What would move the needle most in the next 30 days?"</li>
+                            <li>"What's low-hanging fruit we could execute quickly?"</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>5️⃣ Close & Next Steps (7 min) - Create Momentum</h4>
+                        <ul>
+                            <li>Summarize key insights captured</li>
+                            <li>Align on 2-3 concrete next steps with owners</li>
+                            <li>Set timeline for follow-up</li>
+                            <li>Ask: "What else should we have covered?"</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Universal Brainstorm Exercises</h3>
+                    
+                    <div class="exercise">
+                        <h4>🎯 The "What If" Game</h4>
+                        <p><strong>How it works:</strong> Take any constraint and remove it.</p>
+                        <ul>
+                            <li>"What if we had unlimited budget?"</li>
+                            <li>"What if we could build this feature in 1 day?"</li>
+                            <li>"What if we had 10x more customers tomorrow?"</li>
+                            <li>"What if regulations didn't exist?"</li>
+                        </ul>
+                        <p><strong>Then ask:</strong> "What's the smallest piece of that we could actually do?"</p>
+                    </div>
+                    
+                    <div class="exercise">
+                        <h4>⚡ Lightning Round Ideas</h4>
+                        <p><strong>How it works:</strong> Set a 5-minute timer. Each person shares as many ideas as possible, no filtering.</p>
+                        <ul>
+                            <li>No idea is too wild</li>
+                            <li>Build on others' ideas</li>
+                            <li>Quantity over quality</li>
+                            <li>Write everything down</li>
+                        </ul>
+                        <p><strong>After timer:</strong> Circle the 3 most exciting ideas to explore deeper.</p>
+                    </div>
+                    
+                    <div class="exercise">
+                        <h4>🔍 The Customer Journey Map</h4>
+                        <p><strong>How it works:</strong> Walk through the end-user experience step by step.</p>
+                        <ul>
+                            <li>What happens first? Then what?</li>
+                            <li>Where do people get stuck or confused?</li>
+                            <li>What makes them happy or frustrated?</li>
+                            <li>What would make each step easier?</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="exercise">
+                        <h4>🎨 Reverse Brainstorm</h4>
+                        <p><strong>How it works:</strong> Instead of "How do we succeed?", ask "How could we completely fail?"</p>
+                        <ul>
+                            <li>List all ways to guarantee failure</li>
+                            <li>Then flip each one to identify what NOT to do</li>
+                            <li>Reveals hidden risks and blind spots</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="exercise">
+                        <h4>📊 Impact vs Effort Matrix</h4>
+                        <p><strong>How it works:</strong> Plot all ideas on a 2x2 grid:</p>
+                        <ul>
+                            <li>High Impact, Low Effort = <span class="highlight">Do First</span></li>
+                            <li>High Impact, High Effort = <span class="highlight">Strategic Projects</span></li>
+                            <li>Low Impact, Low Effort = <span class="highlight">Quick Wins</span></li>
+                            <li>Low Impact, High Effort = <span class="highlight">Avoid</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Session Prep Checklist</h3>
+                    <ul class="checklist">
+                        <li>Send calendar invite with clear agenda 48 hours in advance</li>
+                        <li>Share any pre-read materials (deck, one-pager, demo link)</li>
+                        <li>Prepare 5-7 questions tailored to this client type</li>
+                        <li>Set up collaborative doc/whiteboard for capturing ideas</li>
+                        <li>Test tech (Zoom, screen share, recording if permitted)</li>
+                        <li>Block 15 minutes after session for immediate note cleanup</li>
+                    </ul>
+                </div>
+                
+                <div class="section">
+                    <h3>Post-Session Checklist</h3>
+                    <ul class="checklist">
+                        <li>Send thank you + summary within 24 hours</li>
+                        <li>Include: key insights, action items, next steps with dates</li>
+                        <li>Assign owners to each action item internally</li>
+                        <li>Add insights to your master feedback database</li>
+                        <li>Schedule next touchpoint before momentum fades</li>
+                        <li>Update CRM with conversation notes and tags</li>
+                    </ul>
+                </div>
+                
+                <div class="tip">
+                    <strong>💡 Golden Rule:</strong> Listen 70%, talk 30%. The best insights come when clients feel heard and have space to think out loud. Your job is to guide, not dominate the conversation.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advancia Pay Ledger - API Playground</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: #252526;
+            border-right: 1px solid #3e3e42;
+            overflow-y: auto;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #3e3e42;
+        }
+        
+        .header h1 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        .endpoint-list {
+            padding: 20px 0;
+        }
+        
+        .endpoint-category {
+            margin-bottom: 20px;
+        }
+        
+        .category-title {
+            padding: 10px 20px;
+            background: #2d2d30;
+            color: #cccccc;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .category-title:hover {
+            background: #37373d;
+        }
+        
+        .endpoint-item {
+            padding: 10px 20px 10px 40px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .endpoint-item:hover {
+            background: #2a2d2e;
+        }
+        
+        .endpoint-item.active {
+            background: #37373d;
+            border-left-color: #667eea;
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        
+        .method.get { background: #61affe; color: #fff; }
+        .method.post { background: #49cc90; color: #fff; }
+        .method.patch { background: #fca130; color: #fff; }
+        .method.delete { background: #f93e3e; color: #fff; }
+        
+        .endpoint-path {
+            font-size: 0.85em;
+            color: #9cdcfe;
+        }
+        
+        .request-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .request-config {
+            padding: 20px 30px;
+            background: #1e1e1e;
+            border-bottom: 1px solid #3e3e42;
+        }
+        
+        .config-section {
+            margin-bottom: 20px;
+        }
+        
+        .config-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .config-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            background: #3c3c3c;
+            border: 1px solid #3e3e42;
+            color: #d4d4d4;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9em;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            min-height: 150px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: #3c3c3c;
+            margin-left: 10px;
+        }
+        
+        .response-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+            overflow: hidden;
+        }
+        
+        .response-header {
+            padding: 15px 30px;
+            background: #252526;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .response-status {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-success { background: #49cc90; color: white; }
+        .status-error { background: #f93e3e; color: white; }
+        
+        .response-time {
+            color: #858585;
+            font-size: 0.85em;
+        }
+        
+        .response-body {
+            flex: 1;
+            overflow: auto;
+            padding: 20px 30px;
+        }
+        
+        .response-code {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        
+        pre {
+            margin: 0;
+            color: #d4d4d4;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        
+        .json-key { color: #9cdcfe; }
+        .json-string { color: #ce9178; }
+        .json-number { color: #b5cea8; }
+        .json-boolean { color: #569cd6; }
+        .json-null { color: #569cd6; }
+        
+        .tabs {
+            display: flex;
+            background: #252526;
+            border-bottom: 1px solid #3e3e42;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #858585;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            color: #d4d4d4;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #858585;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .empty-state-text {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state-subtext {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+        
+        .auth-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #3c3c3c;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        
+        .auth-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f93e3e;
+        }
+        
+        .auth-dot.connected {
+            background: #49cc90;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .request-config,
+            .response-body {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="endpoint-list">
+                <div class="endpoint-category">
+                    <div class="category-title">Authentication</div>
+                    <div class="endpoint-item" data-endpoint="login">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/auth/login</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="logout">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/auth/logout</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="refresh">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/auth/refresh</span>
+                    </div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <div class="category-title">Facilities</div>
+                    <div class="endpoint-item" data-endpoint="list-facilities">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/facilities</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="get-facility">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/facilities/:id</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="create-facility">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/facilities</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="update-facility">
+                        <span class="method patch">PATCH</span>
+                        <span class="endpoint-path">/facilities/:id</span>
+                    </div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <div class="category-title">Patients</div>
+                    <div class="endpoint-item" data-endpoint="list-patients">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/patients</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="get-patient">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/patients/:id</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="create-patient">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/patients</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="patient-balance">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/patients/:id/balance</span>
+                    </div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <div class="category-title">Payments</div>
+                    <div class="endpoint-item" data-endpoint="process-payment">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/payments</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="get-payment">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/payments/:id</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="list-payments">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/payments</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="refund-payment">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/payments/:id/refund</span>
+                    </div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <div class="category-title">Blockchain</div>
+                    <div class="endpoint-item" data-endpoint="get-transaction">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/transactions/:id</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="list-transactions">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/transactions</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="network-status">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/blockchain/status</span>
+                    </div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <div class="category-title">Invoices</div>
+                    <div class="endpoint-item" data-endpoint="create-invoice">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/invoices</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="get-invoice">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/invoices/:id</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="list-invoices">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/invoices</span>
+                    </div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <div class="category-title">Reports</div>
+                    <div class="endpoint-item" data-endpoint="financial-summary">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/reports/financial-summary</span>
+                    </div>
+                    <div class="endpoint-item" data-endpoint="patient-analytics">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/reports/patient-analytics</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h1>🚀 API Playground</h1>
+                <p>Test Advancia Pay Ledger API endpoints in real-time</p>
+            </div>
+            
+            <div class="request-panel">
+                <div class="tabs">
+                    <div class="tab active" data-tab="request">Request</div>
+                    <div class="tab" data-tab="headers">Headers</div>
+                    <div class="tab" data-tab="response">Response</div>
+                </div>
+                
+                <div id="request-tab" class="tab-content active">
+                    <div class="request-config">
+                        <div class="config-section">
+                            <label class="config-label">
+                                Base URL
+                                <span class="auth-indicator">
+                                    <span class="auth-dot" id="auth-dot"></span>
+                                    <span id="auth-status">Not Authenticated</span>
+                                </span>
+                            </label>
+                            <input type="text" id="base-url" value="https://api.advanciapayledger.com/api/v1" placeholder="https://api.advanciapayledger.com/api/v1">
+                        </div>
+                        
+                        <div class="config-section">
+                            <label class="config-label">Endpoint</label>
+                            <div class="input-group">
+                                <select id="method" style="width: 120px;">
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                    <option value="PATCH">PATCH</option>
+                                    <option value="DELETE">DELETE</option>
+                                </select>
+                                <input type="text" id="endpoint" placeholder="/patients">
+                            </div>
+                        </div>
+                        
+                        <div class="config-section">
+                            <label class="config-label">Request Body (JSON)</label>
+                            <textarea id="request-body" placeholder='{\n  "key": "value"\n}'></textarea>
+                        </div>
+                        
+                        <div class="config-section">
+                            <button class="btn" onclick="sendRequest()">Send Request</button>
+                            <button class="btn btn-secondary" onclick="clearRequest()">Clear</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="headers-tab" class="tab-content">
+                    <div class="request-config">
+                        <div class="config-section">
+                            <label class="config-label">Authorization Token</label>
+                            <input type="text" id="auth-token" placeholder="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                        </div>
+                        
+                        <div class="config-section">
+                            <label class="config-label">API Key (Alternative)</label>
+                            <input type="text" id="api-key" placeholder="apk_live_1234567890abcdef">
+                        </div>
+                        
+                        <div class="config-section">
+                            <label class="config-label">Custom Headers (JSON)</label>
+                            <textarea id="custom-headers" placeholder='{\n  "X-Custom-Header": "value"\n}'></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="response-tab" class="tab-content">
+                    <div class="response-panel">
+                        <div class="response-header">
+                            <div class="response-status">
+                                <span id="status-badge"></span>
+                                <span class="response-time" id="response-time"></span>
+                            </div>
+                        </div>
+                        <div class="response-body">
+                            <div id="response-content" class="empty-state">
+                                <div class="empty-state-icon">📡</div>
+                                <div class="empty-state-text">No response yet</div>
+                                <div class="empty-state-subtext">Send a request to see the response here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const endpoints = {
+            'login': {
+                method: 'POST',
+                path: '/auth/login',
+                body: {
+                    email: 'admin@healthclinic.com',
+                    password: 'SecurePass123!',
+                    mfaCode: '123456'
+                }
+            },
+            'logout': {
+                method: 'POST',
+                path: '/auth/logout',
+                body: null
+            },
+            'refresh': {
+                method: 'POST',
+                path: '/auth/refresh',
+                body: {
+                    refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+                }
+            },
+            'list-facilities': {
+                method: 'GET',
+                path: '/facilities?limit=50',
+                body: null
+            },
+            'get-facility': {
+                method: 'GET',
+                path: '/facilities/fac_xyz789',
+                body: null
+            },
+            'create-facility': {
+                method: 'POST',
+                path: '/facilities',
+                body: {
+                    name: 'New Medical Center',
+                    type: 'HOSPITAL',
+                    taxId: '98-7654321',
+                    npi: '0987654321',
+                    address: {
+                        street: '456 Healthcare Ave',
+                        city: 'Los Angeles',
+                        state: 'CA',
+                        zip: '90001',
+                        country: 'US'
+                    },
+                    contact: {
+                        email: 'admin@newmedical.com',
+                        phone: '+1-555-0188'
+                    }
+                }
+            },
+            'update-facility': {
+                method: 'PATCH',
+                path: '/facilities/fac_xyz789',
+                body: {
+                    name: 'Updated Clinic Name',
+                    settings: {
+                        supportedNetworks: ['solana', 'ethereum', 'polygon', 'base']
+                    }
+                }
+            },
+            'list-patients': {
+                method: 'GET',
+                path: '/patients?limit=50',
+                body: null
+            },
+            'get-patient': {
+                method: 'GET',
+                path: '/patients/pat_abc123',
+                body: null
+            },
+            'create-patient': {
+                method: 'POST',
+                path: '/patients',
+                body: {
+                    facilityId: 'fac_xyz789',
+                    firstName: 'Jane',
+                    lastName: 'Doe',
+                    dateOfBirth: '1985-03-15',
+                    email: 'jane.doe@email.com',
+                    phone: '+1-555-0177',
+                    address: {
+                        street: '789 Patient St',
+                        city: 'San Francisco',
+                        state: 'CA',
+                        zip: '94103'
+                    }
+                }
+            },
+            'patient-balance': {
+                method: 'GET',
+                path: '/patients/pat_abc123/balance',
+                body: null
+            },
+            'process-payment': {
+                method: 'POST',
+                path: '/payments',
+                body: {
+                    patientId: 'pat_abc123',
+                    amount: 150.00,
+                    currency: 'USD',
+                    method: 'CRYPTO',
+                    network: 'solana',
+                    cryptoAmount: 0.845,
+                    cryptoCurrency: 'SOL',
+                    walletAddress: '7xK...xyz',
+                    invoiceId: 'inv_xyz123'
+                }
+            },
+            'get-payment': {
+                method: 'GET',
+                path: '/payments/pmt_abc123',
+                body: null
+            },
+            'list-payments': {
+                method: 'GET',
+                path: '/payments?status=completed&limit=50',
+                body: null
+            },
+            'refund-payment': {
+                method: 'POST',
+                path: '/payments/pmt_abc123/refund',
+                body: {
+                    amount: 150.00,
+                    reason: 'DUPLICATE_CHARGE',
+                    notes: 'Patient was billed twice for same visit'
+                }
+            },
+            'get-transaction': {
+                method: 'GET',
+                path: '/transactions/txn_abc123',
+                body: null
+            },
+            'list-transactions': {
+                method: 'GET',
+                path: '/transactions?network=solana&limit=50',
+                body: null
+            },
+            'network-status': {
+                method: 'GET',
+                path: '/blockchain/status',
+                body: null
+            },
+            'create-invoice': {
+                method: 'POST',
+                path: '/invoices',
+                body: {
+                    patientId: 'pat_abc123',
+                    facilityId: 'fac_xyz789',
+                    dueDate: '2025-02-15',
+                    lineItems: [
+                        {
+                            description: 'Office Visit - Consultation',
+                            code: '99213',
+                            quantity: 1,
+                            unitPrice: 150.00,
+                            total: 150.00
+                        }
+                    ]
+                }
+            },
+            'get-invoice': {
+                method: 'GET',
+                path: '/invoices/inv_xyz123',
+                body: null
+            },
+            'list-invoices': {
+                method: 'GET',
+                path: '/invoices?status=open&limit=50',
+                body: null
+            },
+            'financial-summary': {
+                method: 'GET',
+                path: '/reports/financial-summary?startDate=2025-01-01&endDate=2025-01-31',
+                body: null
+            },
+            'patient-analytics': {
+                method: 'GET',
+                path: '/reports/patient-analytics',
+                body: null
+            }
+        };
+        
+        document.querySelectorAll('.endpoint-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.endpoint-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                const endpointKey = this.getAttribute('data-endpoint');
+                const endpoint = endpoints[endpointKey];
+                
+                if (endpoint) {
+                    document.getElementById('method').value = endpoint.method;
+                    document.getElementById('endpoint').value = endpoint.path;
+                    document.getElementById('request-body').value = endpoint.body 
+                        ? JSON.stringify(endpoint.body, null, 2) 
+                        : '';
+                }
+            });
+        });
+        
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(tabName + '-tab').classList.add('active');
+            });
+        });
+        
+        function sendRequest() {
+            const baseUrl = document.getElementById('base-url').value;
+            const method = document.getElementById('method').value;
+            const endpoint = document.getElementById('endpoint').value;
+            const requestBody = document.getElementById('request-body').value;
+            const authToken = document.getElementById('auth-token').value;
+            const apiKey = document.getElementById('api-key').value;
+            
+            const url = baseUrl + endpoint;
+            const startTime = Date.now();
+            
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (authToken) {
+                headers['Authorization'] = authToken.startsWith('Bearer ') ? authToken : 'Bearer ' + authToken;
+            }
+            
+            if (apiKey) {
+                headers['X-API-Key'] = apiKey;
+            }
+            
+            const options = {
+                method: method,
+                headers: headers
+            };
+            
+            if (requestBody && (method === 'POST' || method === 'PATCH')) {
+                try {
+                    JSON.parse(requestBody);
+                    options.body = requestBody;
+                } catch (e) {
+                    showError('Invalid JSON in request body');
+                    return;
+                }
+            }
+            
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('[data-tab="response"]').classList.add('active');
+            document.getElementById('response-tab').classList.add('active');
+            
+            const responseContent = document.getElementById('response-content');
+            responseContent.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏳</div><div class="empty-state-text">Sending request...</div></div>';
+            
+            fetch(url, options)
+                .then(response => {
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+                    
+                    return response.json().then(data => ({
+                        status: response.status,
+                        data: data,
+                        duration: duration
+                    }));
+                })
+                .then(result => {
+                    showResponse(result.status, result.data, result.duration);
+                })
+                .catch(error => {
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+                    showResponse(0, { error: error.message }, duration);
+                });
+        }
+        
+        function showResponse(status, data, duration) {
+            const statusBadge = document.getElementById('status-badge');
+            const responseTime = document.getElementById('response-time');
+            const responseContent = document.getElementById('response-content');
+            
+            if (status >= 200 && status < 300) {
+                statusBadge.className = 'status-badge status-success';
+                statusBadge.textContent = `${status} Success`;
+            } else {
+                statusBadge.className = 'status-badge status-error';
+                statusBadge.textContent = status === 0 ? 'Network Error' : `${status} Error`;
+            }
+            
+            responseTime.textContent = `${duration}ms`;
+            
+            const formattedJson = syntaxHighlight(JSON.stringify(data, null, 2));
+            responseContent.innerHTML = `<div class="response-code"><pre>${formattedJson}</pre></div>`;
+        }
+        
+        function showError(message) {
+            const responseContent = document.getElementById('response-content');
+            responseContent.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">${message}</div></div>`;
+        }
+        
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+        
+        function clearRequest() {
+            document.getElementById('endpoint').value = '';
+            document.getElementById('request-body').value = '';
+            document.getElementById('response-content').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📡</div><div class="empty-state-text">No response yet</div><div class="empty-state-subtext">Send a request to see the response here</div></div>';
+            document.getElementById('status-badge').textContent = '';
+            document.getElementById('response-time').textContent = '';
+        }
+        
+        document.getElementById('auth-token').addEventListener('input', function() {
+            const authDot = document.getElementById('auth-dot');
+            const authStatus = document.getElementById('auth-status');
+            
+            if (this.value) {
+                authDot.classList.add('connected');
+                authStatus.textContent = 'Authenticated';
+            } else {
+                authDot.classList.remove('connected');
+                authStatus.textContent = 'Not Authenticated';
+            }
+        });
+    </script>
+</body>
+</html>
