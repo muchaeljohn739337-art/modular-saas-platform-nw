@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth.js';
 import { apiClient } from '../lib/api.js';
+import PaymentProcessor from "../components/PaymentProcessor.js";
 
 export default function Dashboard() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -78,67 +79,109 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', padding: '24px' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937' }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f9fafb",
+        padding: "24px",
+      }}
+    >
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "32px",
+          }}
+        >
+          <h1
+            style={{ fontSize: "32px", fontWeight: "bold", color: "#1f2937" }}
+          >
             Welcome, {user?.name}!
           </h1>
           <button
             onClick={logout}
             style={{
-              padding: '8px 16px',
-              backgroundColor: '#ef4444',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              cursor: 'pointer'
+              padding: "8px 16px",
+              backgroundColor: "#ef4444",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "14px",
+              cursor: "pointer",
             }}
           >
             Logout
           </button>
         </div>
 
-        <div style={{ 
-          backgroundColor: 'white', 
-          padding: '24px', 
-          borderRadius: '12px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          marginBottom: '24px'
-        }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '16px' }}>
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "24px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            marginBottom: "24px",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "18px",
+              fontWeight: "600",
+              color: "#1f2937",
+              marginBottom: "16px",
+            }}
+          >
             Total Balance
           </h2>
-          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#10b981' }}>
-            {loading ? 'Loading...' : formatCurrency(totalBalance)}
+          <p style={{ fontSize: "32px", fontWeight: "bold", color: "#10b981" }}>
+            {loading ? "Loading..." : formatCurrency(totalBalance)}
           </p>
         </div>
 
         {wallet && (
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '24px', 
-            borderRadius: '12px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '16px' }}>
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "24px",
+              borderRadius: "12px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "18px",
+                fontWeight: "600",
+                color: "#1f2937",
+                marginBottom: "16px",
+              }}
+            >
               Wallet Details
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+            >
               {wallet.map((w, index) => (
-                <div key={index} style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  padding: '12px',
-                  backgroundColor: '#f9fafb',
-                  borderRadius: '6px'
-                }}>
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "12px",
+                    backgroundColor: "#f9fafb",
+                    borderRadius: "6px",
+                  }}
+                >
                   <div>
-                    <p style={{ fontWeight: '500', color: '#1f2937' }}>{w.currency}</p>
-                    <p style={{ fontSize: '12px', color: '#6b7280' }}>{w.network}</p>
+                    <p style={{ fontWeight: "500", color: "#1f2937" }}>
+                      {w.currency}
+                    </p>
+                    <p style={{ fontSize: "12px", color: "#6b7280" }}>
+                      {w.network}
+                    </p>
                   </div>
-                  <p style={{ fontWeight: 'bold', color: '#1f2937' }}>
+                  <p style={{ fontWeight: "bold", color: "#1f2937" }}>
                     {formatCurrency(w.balance, w.currency)}
                   </p>
                 </div>
@@ -146,6 +189,11 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+
+        {/* Payment Processing Section */}
+        <div style={{ marginTop: "32px" }}>
+          <PaymentProcessor />
+        </div>
       </div>
     </div>
   );
