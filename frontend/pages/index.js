@@ -1,4 +1,4 @@
-// Minimal Homepage for Advancia PayLedger
+// Simple Homepage for Advancia PayLedger
 export default function HomePage() {
   return (
     <div style={{ 
@@ -37,7 +37,7 @@ export default function HomePage() {
           maxWidth: '600px',
           margin: '0 auto 32px'
         }}>
-          Streamline your healthcare payment processing with secure, instant, and compliant transactions designed for the modern medical practice.
+          Streamline your healthcare payment processing with secure, instant, and compliant transactions designed for modern medical practice.
         </p>
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button

@@ -2,10 +2,11 @@
 export default function RegisterPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Mock registration
-    localStorage.setItem('accessToken', 'mock-access-token-' + Date.now());
-    localStorage.setItem('refreshToken', 'mock-refresh-token-' + Date.now());
-    window.location.href = '/dashboard';
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', 'mock-access-token-' + Date.now());
+      localStorage.setItem('refreshToken', 'mock-refresh-token-' + Date.now());
+      window.location.href = '/dashboard';
+    }
   };
 
   return (
@@ -113,66 +114,11 @@ export default function RegisterPage() {
 
           <div>
             <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
-              Phone number (optional)
-            </label>
-            <input
-              type="tel"
-              placeholder="+1 (555) 123-4567"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
-              Organization (optional)
-            </label>
-            <input
-              type="text"
-              placeholder="Healthcare organization name"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
               Password
             </label>
             <input
               type="password"
               placeholder="Create a strong password"
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              placeholder="Confirm your password"
               required
               style={{
                 width: '100%',

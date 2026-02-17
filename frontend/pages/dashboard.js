@@ -1,10 +1,12 @@
 // Simple Dashboard Page for Advancia PayLedger
 export default function Dashboard() {
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('tokenExpiry');
-    window.location.href = '/login';
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('tokenExpiry');
+      window.location.href = '/login';
+    }
   };
 
   const mockWallet = [
@@ -115,7 +117,7 @@ export default function Dashboard() {
             </p>
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '20px' }}>
               <button 
-                onClick={() => window.location.href = '/login'}
+                onClick={() => typeof window !== 'undefined' && (window.location.href = '/login')}
                 style={{
                   padding: '12px 24px',
                   backgroundColor: '#10b981',
@@ -130,7 +132,7 @@ export default function Dashboard() {
                 Send Payment
               </button>
               <button 
-                onClick={() => window.location.href = '/login'}
+                onClick={() => typeof window !== 'undefined' && (window.location.href = '/login')}
                 style={{
                   padding: '12px 24px',
                   backgroundColor: '#3b82f6',
