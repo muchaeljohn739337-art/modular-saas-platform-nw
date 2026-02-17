@@ -35,46 +35,16 @@
       "namedRegex": "^/dashboard(?:/)?$"
     },
     {
-      "page": "/dashboard-backup",
-      "regex": "^/dashboard\\-backup(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/dashboard\\-backup(?:/)?$"
-    },
-    {
-      "page": "/dashboard-simple",
-      "regex": "^/dashboard\\-simple(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/dashboard\\-simple(?:/)?$"
-    },
-    {
-      "page": "/index-minimal",
-      "regex": "^/index\\-minimal(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/index\\-minimal(?:/)?$"
-    },
-    {
       "page": "/login",
       "regex": "^/login(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/login(?:/)?$"
     },
     {
-      "page": "/login-simple",
-      "regex": "^/login\\-simple(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/login\\-simple(?:/)?$"
-    },
-    {
       "page": "/register",
       "regex": "^/register(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/register(?:/)?$"
-    },
-    {
-      "page": "/register-simple",
-      "regex": "^/register\\-simple(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/register\\-simple(?:/)?$"
     }
   ],
   "dataRoutes": [],

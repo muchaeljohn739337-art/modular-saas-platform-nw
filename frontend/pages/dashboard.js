@@ -1,27 +1,24 @@
 // Simple Dashboard Page for Advancia PayLedger
-import { useState, useEffect } from 'react';
-
 export default function Dashboard() {
-  const [wallet, setWallet] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('tokenExpiry');
+    window.location.href = '/login';
+  };
 
-  useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      setUser({ name: 'Advancia User', email: 'admin@demo.com', role: 'admin' });
-      setIsAuthenticated(true);
-      // Mock wallet data
-      setWallet([
-        { currency: 'USD', network: 'Fiat', address: '0x1234567890abcdef1234567890abcdef12345678', balance: 1250.50 },
-        { currency: 'USDC', network: 'Ethereum', address: '0xabcdef1234567890abcdef1234567890abcdef12', balance: 500.00 },
-        { currency: 'ETH', network: 'Ethereum', address: '0x7890abcdef1234567890abcdef1234567890abcd', balance: 0.75 }
-      ]);
+  const mockWallet = [
+    { currency: 'USD', network: 'Fiat', address: '0x1234567890abcdef1234567890abcdef12345678', balance: 1250.50 },
+    { currency: 'USDC', network: 'Ethereum', address: '0xabcdef1234567890abcdef1234567890abcdef12', balance: 500.00 },
+    { currency: 'ETH', network: 'Ethereum', address: '0x7890abcdef1234567890abcdef1234567890abcd', balance: 0.75 }
+  ];
+
+  const totalBalance = mockWallet.reduce((sum, w) => {
+    if (w.currency === 'USD' || w.currency === 'USDC') {
+      return sum + w.balance;
     }
-    setLoading(false);
-  }, []);
+    return sum;
+  }, 0);
 
   const formatCurrency = (amount, currency = 'USD') => {
     if (currency === 'USD' || currency === 'USDC') {
@@ -34,62 +31,12 @@ export default function Dashboard() {
     return amount.toString();
   };
 
-  const totalBalance = wallet ? wallet.reduce((sum, w) => {
-    if (w.currency === 'USD' || w.currency === 'USDC') {
-      return sum + w.balance;
-    }
-    return sum;
-  }, 0) : 0;
-
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('tokenExpiry');
-    setUser(null);
-    setIsAuthenticated(false);
-    setWallet(null);
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        backgroundColor: '#f9fafb',
-        padding: '24px'
-      }}>
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>
-            Please log in to access your dashboard
-          </h1>
-          <button 
-            onClick={() => window.location.href = '/login'}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '16px',
-              cursor: 'pointer',
-              marginTop: '16px'
-            }}
-          >
-            Go to Login
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', padding: '24px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
           <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937' }}>
-            Welcome, {user?.name}!
+            Welcome, Advancia User!
           </h1>
           <button
             onClick={handleLogout}
@@ -118,41 +65,39 @@ export default function Dashboard() {
             Total Balance
           </h2>
           <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#10b981' }}>
-            {loading ? 'Loading...' : formatCurrency(totalBalance)}
+            {formatCurrency(totalBalance)}
           </p>
         </div>
 
-        {wallet && (
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '24px', 
-            borderRadius: '12px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '16px' }}>
-              Wallet Details
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {wallet.map((w, index) => (
-                <div key={index} style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  padding: '12px',
-                  backgroundColor: '#f9fafb',
-                  borderRadius: '6px'
-                }}>
-                  <div>
-                    <p style={{ fontWeight: '500', color: '#1f2937' }}>{w.currency}</p>
-                    <p style={{ fontSize: '12px', color: '#6b7280' }}>{w.network}</p>
-                  </div>
-                  <p style={{ fontWeight: 'bold', color: '#1f2937' }}>
-                    {formatCurrency(w.balance, w.currency)}
-                  </p>
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: '24px', 
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', marginBottom: '16px' }}>
+            Wallet Details
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {mockWallet.map((w, index) => (
+              <div key={index} style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '12px',
+                backgroundColor: '#f9fafb',
+                borderRadius: '6px'
+              }}>
+                <div>
+                  <p style={{ fontWeight: '500', color: '#1f2937' }}>{w.currency}</p>
+                  <p style={{ fontSize: '12px', color: '#6b7280' }}>{w.network}</p>
                 </div>
-              ))}
-            </div>
+                <p style={{ fontWeight: 'bold', color: '#1f2937' }}>
+                  {formatCurrency(w.balance, w.currency)}
+                </p>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
 
         <div style={{ marginTop: '32px' }}>
           <div style={{ 
@@ -166,24 +111,40 @@ export default function Dashboard() {
               Payment Processing
             </h3>
             <p style={{ color: '#6b7280', fontSize: '16px' }}>
-                Payment processing functionality is available. Please log in to access payment features.
+              Payment processing functionality is available. Send and receive payments securely.
             </p>
-            <button 
-              onClick={() => window.location.href = '/login'}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '16px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                marginTop: '16px'
-              }}
-            >
-              Go to Login
-            </button>
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '20px' }}>
+              <button 
+                onClick={() => window.location.href = '/login'}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+              >
+                Send Payment
+              </button>
+              <button 
+                onClick={() => window.location.href = '/login'}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+              >
+                Request Payment
+              </button>
+            </div>
           </div>
         </div>
       </div>
