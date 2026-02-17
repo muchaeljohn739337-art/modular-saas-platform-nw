@@ -4,11 +4,6 @@
   "/_document": "pages/_document.js",
   "/_error": "pages/_error.js",
   "/dashboard": "pages/dashboard.js",
-  "/dashboard-backup": "pages/dashboard-backup.js",
-  "/dashboard-simple": "pages/dashboard-simple.js",
-  "/index-minimal": "pages/index-minimal.js",
   "/login": "pages/login.js",
-  "/login-simple": "pages/login-simple.js",
-  "/register": "pages/register.js",
-  "/register-simple": "pages/register-simple.js"
+  "/register": "pages/register.js"
 }

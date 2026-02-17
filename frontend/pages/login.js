@@ -1,41 +1,11 @@
 // Simple Login Page for Advancia PayLedger
-import { useState } from 'react';
-
 export default function LoginPage() {
-  const [formData, setFormData] = useState({ 
-    email: 'admin@demo.com', 
-    password: 'test-password' 
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Mock login for now
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful login
-      localStorage.setItem('accessToken', 'mock-access-token-' + Date.now());
-      localStorage.setItem('refreshToken', 'mock-refresh-token-' + Date.now());
-      
-      // Redirect to dashboard
-      window.location.href = '/dashboard';
-    } catch (error) {
-      setError(error.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    // Mock login
+    localStorage.setItem('accessToken', 'mock-access-token-' + Date.now());
+    localStorage.setItem('refreshToken', 'mock-refresh-token-' + Date.now());
+    window.location.href = '/dashboard';
   };
 
   return (
@@ -88,9 +58,7 @@ export default function LoginPage() {
             </label>
             <input
               type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              defaultValue="admin@demo.com"
               placeholder="Enter your email"
               required
               style={{
@@ -110,9 +78,7 @@ export default function LoginPage() {
             </label>
             <input
               type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+              defaultValue="test-password"
               placeholder="Enter your password"
               required
               style={{
@@ -126,36 +92,21 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && (
-            <div style={{
-              padding: '12px',
-              backgroundColor: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: '6px',
-              color: '#dc2626',
-              fontSize: '14px',
-              marginBottom: '16px'
-            }}>
-              {error}
-            </div>
-          )}
-
           <button
             type="submit"
-            disabled={loading}
             style={{
               padding: '12px 24px',
-              backgroundColor: loading ? '#9ca3af' : '#3b82f6',
+              backgroundColor: '#3b82f6',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
               fontSize: '16px',
               fontWeight: '500',
-              cursor: loading ? 'not-allowed' : 'pointer',
+              cursor: 'pointer',
               transition: 'background-color 0.2s'
             }}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            Sign In
           </button>
         </form>
 
