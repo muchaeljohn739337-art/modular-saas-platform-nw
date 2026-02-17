@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advancia Pay Ledger - Microservices Architecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .service-card {
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">Advancia Pay Ledger</h1>
+            <p class="text-slate-600 mb-6">Microservices Architecture Design</p>
+
+            <!-- Services Grid -->
+            <div id="services-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8"></div>
+
+            <!-- Selected Service Details -->
+            <div id="service-details" class="hidden bg-slate-50 rounded-lg p-6 mb-8 border-2 border-slate-200">
+                <div class="flex items-center gap-3 mb-4">
+                    <span id="service-icon" class="text-4xl"></span>
+                    <h2 id="service-name" class="text-2xl font-bold text-slate-800"></h2>
+                </div>
+                
+                <p id="service-description" class="text-slate-700 mb-4"></p>
+                
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-slate-800 mb-2">Tech Stack</h3>
+                        <ul id="service-tech" class="text-sm text-slate-600"></ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold text-slate-800 mb-2">Data Models</h3>
+                        <ul id="service-data" class="text-sm text-slate-600"></ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold text-slate-800 mb-2">Key APIs</h3>
+                        <ul id="service-apis" class="text-sm text-slate-600 font-mono"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infrastructure Components -->
+            <div class="bg-gradient-to-r from-slate-700 to-slate-800 rounded-lg p-6 text-white mb-8">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-2xl">🖥️</span>
+                    <h2 class="text-xl font-bold">Infrastructure Layer</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white/10 rounded-lg p-4 backdrop-blur">
+                        <h3 class="font-semibold mb-1">API Gateway</h3>
+                        <p class="text-sm text-slate-300 mb-2">Route requests, rate limiting, auth verification</p>
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">Kong/NGINX</span>
+                    </div>
+                    <div class="bg-white/10 rounded-lg p-4 backdrop-blur">
+                        <h3 class="font-semibold mb-1">Service Mesh</h3>
+                        <p class="text-sm text-slate-300 mb-2">Service-to-service communication, load balancing</p>
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">Istio/Linkerd</span>
+                    </div>
+                    <div class="bg-white/10 rounded-lg p-4 backdrop-blur">
+                        <h3 class="font-semibold mb-1">Message Queue</h3>
+                        <p class="text-sm text-slate-300 mb-2">Async communication, event streaming</p>
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">RabbitMQ/Kafka</span>
+                    </div>
+                    <div class="bg-white/10 rounded-lg p-4 backdrop-blur">
+                        <h3 class="font-semibold mb-1">Service Discovery</h3>
+                        <p class="text-sm text-slate-300 mb-2">Dynamic service registration and lookup</p>
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">Consul/Eureka</span>
+                    </div>
+                    <div class="bg-white/10 rounded-lg p-4 backdrop-blur">
+                        <h3 class="font-semibold mb-1">Config Server</h3>
+                        <p class="text-sm text-slate-300 mb-2">Centralized configuration management</p>
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">Spring Cloud Config</span>
+                    </div>
+                    <div class="bg-white/10 rounded-lg p-4 backdrop-blur">
+                        <h3 class="font-semibold mb-1">Monitoring</h3>
+                        <p class="text-sm text-slate-300 mb-2">Metrics, logging, tracing</p>
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded">Prometheus/Grafana/Jaeger</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Patterns -->
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
+                    <h3 class="font-bold text-blue-900 mb-2">Synchronous</h3>
+                    <p class="text-sm text-blue-800">REST APIs for immediate responses (auth, queries, user actions)</p>
+                </div>
+                
+                <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                    <h3 class="font-bold text-green-900 mb-2">Asynchronous</h3>
+                    <p class="text-sm text-green-800">Message queues for blockchain events, notifications, analytics</p>
+                </div>
+                
+                <div class="bg-purple-50 rounded-lg p-4 border-2 border-purple-200">
+                    <h3 class="font-bold text-purple-900 mb-2">Event-Driven</h3>
+                    <p class="text-sm text-purple-800">Event bus for transaction confirmations, appointment updates</p>
+                </div>
+            </div>
+
+            <!-- Database Strategy -->
+            <div class="bg-amber-50 rounded-lg p-4 border-2 border-amber-200 mb-6">
+                <h3 class="font-bold text-amber-900 mb-2">Database Strategy</h3>
+                <p class="text-sm text-amber-800">
+                    <strong>Database per Service:</strong> Each service owns its data. 
+                    Auth uses Redis + PostgreSQL. Blockchain uses TimescaleDB for time-series. 
+                    Wallet and Payment share PostgreSQL with separate schemas. 
+                    Medical services use PostgreSQL with replication.
+                </p>
+            </div>
+
+            <!-- Migration Strategy -->
+            <div class="bg-slate-100 rounded-lg p-4">
+                <h3 class="font-semibold text-slate-800 mb-2">Migration Strategy</h3>
+                <ol class="text-sm text-slate-700 space-y-1">
+                    <li>1. Start with <strong>Auth Service</strong> - extract first, shared dependency</li>
+                    <li>2. Extract <strong>Blockchain Monitor</strong> - independent, CPU-intensive</li>
+                    <li>3. Split <strong>Payment Processing</strong> - high transaction volume</li>
+                    <li>4. Separate <strong>Medical Services</strong> - different scaling needs</li>
+                    <li>5. Extract remaining services incrementally while running hybrid</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const services = [
+            {
+                id: 'auth',
+                name: 'Auth & Identity Service',
+                icon: '🛡️',
+                color: 'bg-purple-500',
+                description: 'User authentication, authorization, JWT management, role-based access control',
+                tech: ['Node.js', 'JWT', 'Redis'],
+                data: ['Users', 'Sessions', 'Roles', 'Permissions'],
+                apis: ['/auth/login', '/auth/register', '/auth/verify', '/auth/refresh']
+            },
+            {
+                id: 'wallet',
+                name: 'Wallet Service',
+                icon: '💰',
+                color: 'bg-blue-500',
+                description: 'Crypto wallet management, balance tracking, address generation',
+                tech: ['Node.js', 'Web3.js', 'Ethers.js'],
+                data: ['Wallets', 'Balances', 'Addresses'],
+                apis: ['/wallet/create', '/wallet/balance', '/wallet/addresses']
+            },
+            {
+                id: 'blockchain',
+                name: 'Blockchain Monitor Service',
+                icon: '⛓️',
+                color: 'bg-green-500',
+                description: 'Real-time blockchain monitoring, deposit detection, transaction confirmation',
+                tech: ['Node.js', 'Alchemy SDK', 'WebSocket'],
+                data: ['Transactions', 'Blocks', 'Confirmations'],
+                apis: ['/blockchain/monitor', '/blockchain/status', '/blockchain/history']
+            },
+            {
+                id: 'payment',
+                name: 'Payment Processing Service',
+                icon: '⚡',
+                color: 'bg-yellow-500',
+                description: 'Fiat payments via Stripe, crypto withdrawals, currency conversion, fee calculation',
+                tech: ['Node.js', 'Stripe SDK', 'CoinGecko API'],
+                data: ['Payments', 'Withdrawals', 'Fees', 'Conversions'],
+                apis: ['/payment/deposit', '/payment/withdraw', '/payment/convert']
+            },
+            {
+                id: 'kyc',
+                name: 'KYC/Compliance Service',
+                icon: '👥',
+                color: 'bg-red-500',
+                description: 'Identity verification, document processing, compliance checks, risk scoring',
+                tech: ['Node.js', 'AI/ML APIs'],
+                data: ['KYCRecords', 'Documents', 'VerificationStatus'],
+                apis: ['/kyc/submit', '/kyc/verify', '/kyc/status']
+            },
+            {
+                id: 'medical',
+                name: 'Medical Facility Service',
+                icon: '🏥',
+                color: 'bg-pink-500',
+                description: 'Facility management, bed tracking, availability monitoring',
+                tech: ['Node.js', 'PostgreSQL'],
+                data: ['Facilities', 'Beds', 'Departments'],
+                apis: ['/facilities/list', '/beds/status', '/departments/manage']
+            },
+            {
+                id: 'appointments',
+                name: 'Appointment Service',
+                icon: '📅',
+                color: 'bg-indigo-500',
+                description: 'Scheduling, booking management, conflict resolution, reminders',
+                tech: ['Node.js', 'Calendar APIs'],
+                data: ['Appointments', 'Schedules', 'Availability'],
+                apis: ['/appointments/book', '/appointments/cancel', '/appointments/list']
+            },
+            {
+                id: 'notification',
+                name: 'Notification Service',
+                icon: '🔔',
+                color: 'bg-orange-500',
+                description: 'Email, SMS, push notifications, transaction alerts',
+                tech: ['Node.js', 'SendGrid', 'FCM'],
+                data: ['Notifications', 'Templates', 'Preferences'],
+                apis: ['/notify/email', '/notify/sms', '/notify/push']
+            },
+            {
+                id: 'ai',
+                name: 'AI Agent Service',
+                icon: '🤖',
+                color: 'bg-teal-500',
+                description: 'Claude/Ollama integration, chat support, automated responses',
+                tech: ['Node.js', 'Anthropic SDK', 'Ollama'],
+                data: ['Conversations', 'AgentConfigs'],
+                apis: ['/ai/chat', '/ai/analyze', '/ai/support']
+            },
+            {
+                id: 'analytics',
+                name: 'Analytics & Reporting Service',
+                icon: '📊',
+                color: 'bg-cyan-500',
+                description: 'Transaction analytics, audit logs, dashboards, insights',
+                tech: ['Node.js', 'TimescaleDB'],
+                data: ['AuditLogs', 'Metrics', 'Reports'],
+                apis: ['/analytics/dashboard', '/analytics/reports', '/analytics/logs']
+            }
+        ];
+
+        const servicesGrid = document.getElementById('services-grid');
+        const serviceDetails = document.getElementById('service-details');
+
+        services.forEach(service => {
+            const card = document.createElement('button');
+            card.className = `service-card p-4 rounded-lg ${service.color} text-white hover:shadow-lg`;
+            card.innerHTML = `
+                <div class="text-4xl mb-2">${service.icon}</div>
+                <div class="text-sm font-semibold text-center">${service.name}</div>
+            `;
+            card.onclick = () => showServiceDetails(service);
+            servicesGrid.appendChild(card);
+        });
+
+        function showServiceDetails(service) {
+            serviceDetails.classList.remove('hidden');
+            document.getElementById('service-icon').textContent = service.icon;
+            document.getElementById('service-name').textContent = service.name;
+            document.getElementById('service-description').textContent = service.description;
+            
+            const techList = document.getElementById('service-tech');
+            techList.innerHTML = service.tech.map(t => `
+                <li class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                    ${t}
+                </li>
+            `).join('');
+            
+            const dataList = document.getElementById('service-data');
+            dataList.innerHTML = service.data.map(d => `
+                <li class="flex items-center gap-2">
+                    <span>💾</span>
+                    ${d}
+                </li>
+            `).join('');
+            
+            const apisList = document.getElementById('service-apis');
+            apisList.innerHTML = service.apis.map(api => `<li class="truncate">${api}</li>`).join('');
+            
+            serviceDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
