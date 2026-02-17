@@ -2,10 +2,11 @@
 export default function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Mock login
-    localStorage.setItem('accessToken', 'mock-access-token-' + Date.now());
-    localStorage.setItem('refreshToken', 'mock-refresh-token-' + Date.now());
-    window.location.href = '/dashboard';
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', 'mock-access-token-' + Date.now());
+      localStorage.setItem('refreshToken', 'mock-refresh-token-' + Date.now());
+      window.location.href = '/dashboard';
+    }
   };
 
   return (
