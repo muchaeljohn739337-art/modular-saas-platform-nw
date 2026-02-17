@@ -9,29 +9,32 @@ export const useAuth = () => {
 
   // Check authentication status on mount
   useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const token =
+          typeof window !== "undefined"
+            ? localStorage.getItem("accessToken")
+            : null;
+        if (token) {
+          // Validate token and get user profile
+          const profileResponse = await apiClient.getProfile();
+          if (profileResponse.success) {
+            setUser(profileResponse.data.user);
+          } else {
+            // Token invalid, clear it
+            clearAuth();
+          }
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        clearAuth();
+      } finally {
+        setLoading(false);
+      }
+    };
+
     checkAuthStatus();
   }, []);
-
-  const checkAuthStatus = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        // Validate token and get user profile
-        const profileResponse = await apiClient.getProfile();
-        if (profileResponse.success) {
-          setUser(profileResponse.data.user);
-        } else {
-          // Token invalid, clear it
-          clearAuth();
-        }
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      clearAuth();
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const clearAuth = () => {
     localStorage.removeItem("accessToken");
