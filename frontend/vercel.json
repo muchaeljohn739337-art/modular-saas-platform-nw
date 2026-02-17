@@ -19,6 +19,10 @@
     {
       "src": "pages/index.js",
       "dest": "/"
+    },
+    {
+      "src": "pages/signup.js",
+      "dest": "/signup"
     }
   ]
 }
