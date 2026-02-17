@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cli_traces.json</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .file-info {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        /* Syntax highlighting for JavaScript/TypeScript */
+        .keyword { color: #c792ea; font-weight: bold; }
+        .string { color: #c3e88d; }
+        .number { color: #f78c6c; }
+        .comment { color: #546e7a; font-style: italic; }
+        .function { color: #82aaff; }
+        .variable { color: #f07178; }
+        .operator { color: #89ddff; }
+        .class-name { color: #ffcb6b; }
+        .method { color: #82aaff; }
+        .property { color: #ffcb6b; }
+        .bracket { color: #ff5370; }
+        .line-numbers {
+            color: #546e7a;
+            margin-right: 15px;
+            user-select: none;
+            border-right: 1px solid #546e7a;
+            padding-right: 10px;
+        }
+        .code-line {
+            display: flex;
+            min-height: 1.4em;
+        }
+        .code-content {
+            flex: 1;
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-button:hover {
+            background-color: #2980b9;
+        }
+        .code-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>cli_traces.json</h1>
+        <div class="file-info">
+            <strong>File:</strong> cli_traces.json<br>
+            <strong>Language:</strong> json<br>
+            <strong>Lines:</strong> 1
+        </div>
+        <div class="code-container">
+            <button class="copy-button" onclick="copyCode()">Copy Code</button>
+            <pre id="code-content">[{&quot;name&quot;:&quot;vc.builder.install&quot;,&quot;duration&quot;:5187985,&quot;timestamp&quot;:43229693256,&quot;id&quot;:&quot;64c974bf-dbac-4600-a050-7734a55ccd1c&quot;,&quot;parentId&quot;:&quot;5e55edba-7a3d-4c00-b4af-9036859f78bc&quot;,&quot;tags&quot;:{&quot;cliType&quot;:&quot;npm&quot;,&quot;lockfileVersion&quot;:&quot;3&quot;},&quot;startTime&quot;:1771211415734},{&quot;name&quot;:&quot;vc.builder.build&quot;,&quot;duration&quot;:4775654,&quot;timestamp&quot;:43234883678,&quot;id&quot;:&quot;ad9a9735-f3ff-430a-9428-05703b6a44d2&quot;,&quot;parentId&quot;:&quot;5e55edba-7a3d-4c00-b4af-9036859f78bc&quot;,&quot;tags&quot;:{&quot;buildScriptName&quot;:&quot;build&quot;},&quot;startTime&quot;:1771211420925},{&quot;name&quot;:&quot;vc.builder&quot;,&quot;duration&quot;:9996564,&quot;timestamp&quot;:43229666223,&quot;id&quot;:&quot;5e55edba-7a3d-4c00-b4af-9036859f78bc&quot;,&quot;parentId&quot;:&quot;bc1562f8-1f44-4226-90ff-523cd68f45cd&quot;,&quot;tags&quot;:{&quot;name&quot;:&quot;@vercel/next&quot;,&quot;install&quot;:&quot;true&quot;,&quot;build&quot;:&quot;true&quot;},&quot;startTime&quot;:1771211415707},{&quot;name&quot;:&quot;vc.builder.diagnostics&quot;,&quot;duration&quot;:5908,&quot;timestamp&quot;:43239662848,&quot;id&quot;:&quot;05f0bc44-ce23-446e-a07d-d1d47addcad9&quot;,&quot;parentId&quot;:&quot;5e55edba-7a3d-4c00-b4af-9036859f78bc&quot;,&quot;tags&quot;:{},&quot;startTime&quot;:1771211425704},{&quot;name&quot;:&quot;vc.doBuild&quot;,&quot;duration&quot;:10381294,&quot;timestamp&quot;:43229293974,&quot;id&quot;:&quot;bc1562f8-1f44-4226-90ff-523cd68f45cd&quot;,&quot;parentId&quot;:&quot;14a729cb-6ef2-4104-bb99-10d75ccdbd28&quot;,&quot;tags&quot;:{},&quot;startTime&quot;:1771211415335},{&quot;name&quot;:&quot;vc&quot;,&quot;duration&quot;:17718946,&quot;timestamp&quot;:43221956712,&quot;id&quot;:&quot;14a729cb-6ef2-4104-bb99-10d75ccdbd28&quot;,&quot;tags&quot;:{},&quot;startTime&quot;:1771211407998}]</pre>
+        </div>
+    </div>
+    <script>
+        function copyCode() {
+            const codeElement = document.getElementById('code-content');
+            const textContent = codeElement.textContent;
+            navigator.clipboard.writeText(textContent).then(() => {
+                const button = document.querySelector('.copy-button');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

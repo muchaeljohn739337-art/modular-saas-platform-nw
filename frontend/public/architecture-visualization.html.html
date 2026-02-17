@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>architecture-visualization.html</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .file-info {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        /* Syntax highlighting for JavaScript/TypeScript */
+        .keyword { color: #c792ea; font-weight: bold; }
+        .string { color: #c3e88d; }
+        .number { color: #f78c6c; }
+        .comment { color: #546e7a; font-style: italic; }
+        .function { color: #82aaff; }
+        .variable { color: #f07178; }
+        .operator { color: #89ddff; }
+        .class-name { color: #ffcb6b; }
+        .method { color: #82aaff; }
+        .property { color: #ffcb6b; }
+        .bracket { color: #ff5370; }
+        .line-numbers {
+            color: #546e7a;
+            margin-right: 15px;
+            user-select: none;
+            border-right: 1px solid #546e7a;
+            padding-right: 10px;
+        }
+        .code-line {
+            display: flex;
+            min-height: 1.4em;
+        }
+        .code-content {
+            flex: 1;
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-button:hover {
+            background-color: #2980b9;
+        }
+        .code-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>architecture-visualization.html</h1>
+        <div class="file-info">
+            <strong>File:</strong> architecture-visualization.html<br>
+            <strong>Language:</strong> html<br>
+            <strong>Lines:</strong> 284
+        </div>
+        <div class="code-container">
+            <button class="copy-button" onclick="copyCode()">Copy Code</button>
+            <pre id="code-content">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Advancia Pay Ledger - Microservices Architecture&lt;/title&gt;
+    &lt;script src=&quot;https://cdn.tailwindcss.com&quot;&gt;&lt;/script&gt;
+    &lt;style&gt;
+        .service-card {
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            transform: scale(1.05);
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body class=&quot;bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen p-6&quot;&gt;
+    &lt;div class=&quot;max-w-7xl mx-auto&quot;&gt;
+        &lt;div class=&quot;bg-white rounded-lg shadow-lg p-6&quot;&gt;
+            &lt;h1 class=&quot;text-3xl font-bold text-slate-800 mb-2&quot;&gt;Advancia Pay Ledger&lt;/h1&gt;
+            &lt;p class=&quot;text-slate-600 mb-6&quot;&gt;Microservices Architecture Design&lt;/p&gt;
+
+            &lt;!-- Services Grid --&gt;
+            &lt;div id=&quot;services-grid&quot; class=&quot;grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8&quot;&gt;&lt;/div&gt;
+
+            &lt;!-- Selected Service Details --&gt;
+            &lt;div id=&quot;service-details&quot; class=&quot;hidden bg-slate-50 rounded-lg p-6 mb-8 border-2 border-slate-200&quot;&gt;
+                &lt;div class=&quot;flex items-center gap-3 mb-4&quot;&gt;
+                    &lt;span id=&quot;service-icon&quot; class=&quot;text-4xl&quot;&gt;&lt;/span&gt;
+                    &lt;h2 id=&quot;service-name&quot; class=&quot;text-2xl font-bold text-slate-800&quot;&gt;&lt;/h2&gt;
+                &lt;/div&gt;
+                
+                &lt;p id=&quot;service-description&quot; class=&quot;text-slate-700 mb-4&quot;&gt;&lt;/p&gt;
+                
+                &lt;div class=&quot;grid md:grid-cols-3 gap-4&quot;&gt;
+                    &lt;div&gt;
+                        &lt;h3 class=&quot;font-semibold text-slate-800 mb-2&quot;&gt;Tech Stack&lt;/h3&gt;
+                        &lt;ul id=&quot;service-tech&quot; class=&quot;text-sm text-slate-600&quot;&gt;&lt;/ul&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div&gt;
+                        &lt;h3 class=&quot;font-semibold text-slate-800 mb-2&quot;&gt;Data Models&lt;/h3&gt;
+                        &lt;ul id=&quot;service-data&quot; class=&quot;text-sm text-slate-600&quot;&gt;&lt;/ul&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div&gt;
+                        &lt;h3 class=&quot;font-semibold text-slate-800 mb-2&quot;&gt;Key APIs&lt;/h3&gt;
+                        &lt;ul id=&quot;service-apis&quot; class=&quot;text-sm text-slate-600 font-mono&quot;&gt;&lt;/ul&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Infrastructure Components --&gt;
+            &lt;div class=&quot;bg-gradient-to-r from-slate-700 to-slate-800 rounded-lg p-6 text-white mb-8&quot;&gt;
+                &lt;div class=&quot;flex items-center gap-2 mb-4&quot;&gt;
+                    &lt;span class=&quot;text-2xl&quot;&gt;🖥️&lt;/span&gt;
+                    &lt;h2 class=&quot;text-xl font-bold&quot;&gt;Infrastructure Layer&lt;/h2&gt;
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;grid md:grid-cols-2 lg:grid-cols-3 gap-4&quot;&gt;
+                    &lt;div class=&quot;bg-white/10 rounded-lg p-4 backdrop-blur&quot;&gt;
+                        &lt;h3 class=&quot;font-semibold mb-1&quot;&gt;API Gateway&lt;/h3&gt;
+                        &lt;p class=&quot;text-sm text-slate-300 mb-2&quot;&gt;Route requests, rate limiting, auth verification&lt;/p&gt;
+                        &lt;span class=&quot;text-xs bg-white/20 px-2 py-1 rounded&quot;&gt;Kong/NGINX&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;bg-white/10 rounded-lg p-4 backdrop-blur&quot;&gt;
+                        &lt;h3 class=&quot;font-semibold mb-1&quot;&gt;Service Mesh&lt;/h3&gt;
+                        &lt;p class=&quot;text-sm text-slate-300 mb-2&quot;&gt;Service-to-service communication, load balancing&lt;/p&gt;
+                        &lt;span class=&quot;text-xs bg-white/20 px-2 py-1 rounded&quot;&gt;Istio/Linkerd&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;bg-white/10 rounded-lg p-4 backdrop-blur&quot;&gt;
+                        &lt;h3 class=&quot;font-semibold mb-1&quot;&gt;Message Queue&lt;/h3&gt;
+                        &lt;p class=&quot;text-sm text-slate-300 mb-2&quot;&gt;Async communication, event streaming&lt;/p&gt;
+                        &lt;span class=&quot;text-xs bg-white/20 px-2 py-1 rounded&quot;&gt;RabbitMQ/Kafka&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;bg-white/10 rounded-lg p-4 backdrop-blur&quot;&gt;
+                        &lt;h3 class=&quot;font-semibold mb-1&quot;&gt;Service Discovery&lt;/h3&gt;
+                        &lt;p class=&quot;text-sm text-slate-300 mb-2&quot;&gt;Dynamic service registration and lookup&lt;/p&gt;
+                        &lt;span class=&quot;text-xs bg-white/20 px-2 py-1 rounded&quot;&gt;Consul/Eureka&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;bg-white/10 rounded-lg p-4 backdrop-blur&quot;&gt;
+                        &lt;h3 class=&quot;font-semibold mb-1&quot;&gt;Config Server&lt;/h3&gt;
+                        &lt;p class=&quot;text-sm text-slate-300 mb-2&quot;&gt;Centralized configuration management&lt;/p&gt;
+                        &lt;span class=&quot;text-xs bg-white/20 px-2 py-1 rounded&quot;&gt;Spring Cloud Config&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;bg-white/10 rounded-lg p-4 backdrop-blur&quot;&gt;
+                        &lt;h3 class=&quot;font-semibold mb-1&quot;&gt;Monitoring&lt;/h3&gt;
+                        &lt;p class=&quot;text-sm text-slate-300 mb-2&quot;&gt;Metrics, logging, tracing&lt;/p&gt;
+                        &lt;span class=&quot;text-xs bg-white/20 px-2 py-1 rounded&quot;&gt;Prometheus/Grafana/Jaeger&lt;/span&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Communication Patterns --&gt;
+            &lt;div class=&quot;grid md:grid-cols-3 gap-4 mb-6&quot;&gt;
+                &lt;div class=&quot;bg-blue-50 rounded-lg p-4 border-2 border-blue-200&quot;&gt;
+                    &lt;h3 class=&quot;font-bold text-blue-900 mb-2&quot;&gt;Synchronous&lt;/h3&gt;
+                    &lt;p class=&quot;text-sm text-blue-800&quot;&gt;REST APIs for immediate responses (auth, queries, user actions)&lt;/p&gt;
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;bg-green-50 rounded-lg p-4 border-2 border-green-200&quot;&gt;
+                    &lt;h3 class=&quot;font-bold text-green-900 mb-2&quot;&gt;Asynchronous&lt;/h3&gt;
+                    &lt;p class=&quot;text-sm text-green-800&quot;&gt;Message queues for blockchain events, notifications, analytics&lt;/p&gt;
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;bg-purple-50 rounded-lg p-4 border-2 border-purple-200&quot;&gt;
+                    &lt;h3 class=&quot;font-bold text-purple-900 mb-2&quot;&gt;Event-Driven&lt;/h3&gt;
+                    &lt;p class=&quot;text-sm text-purple-800&quot;&gt;Event bus for transaction confirmations, appointment updates&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Database Strategy --&gt;
+            &lt;div class=&quot;bg-amber-50 rounded-lg p-4 border-2 border-amber-200 mb-6&quot;&gt;
+                &lt;h3 class=&quot;font-bold text-amber-900 mb-2&quot;&gt;Database Strategy&lt;/h3&gt;
+                &lt;p class=&quot;text-sm text-amber-800&quot;&gt;
+                    &lt;strong&gt;Database per Service:&lt;/strong&gt; Each service owns its data. 
+                    Auth uses Redis + PostgreSQL. Blockchain uses TimescaleDB for time-series. 
+                    Wallet and Payment share PostgreSQL with separate schemas. 
+                    Medical services use PostgreSQL with replication.
+                &lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Migration Strategy --&gt;
+            &lt;div class=&quot;bg-slate-100 rounded-lg p-4&quot;&gt;
+                &lt;h3 class=&quot;font-semibold text-slate-800 mb-2&quot;&gt;Migration Strategy&lt;/h3&gt;
+                &lt;ol class=&quot;text-sm text-slate-700 space-y-1&quot;&gt;
+                    &lt;li&gt;1. Start with &lt;strong&gt;Auth Service&lt;/strong&gt; - extract first, shared dependency&lt;/li&gt;
+                    &lt;li&gt;2. Extract &lt;strong&gt;Blockchain Monitor&lt;/strong&gt; - independent, CPU-intensive&lt;/li&gt;
+                    &lt;li&gt;3. Split &lt;strong&gt;Payment Processing&lt;/strong&gt; - high transaction volume&lt;/li&gt;
+                    &lt;li&gt;4. Separate &lt;strong&gt;Medical Services&lt;/strong&gt; - different scaling needs&lt;/li&gt;
+                    &lt;li&gt;5. Extract remaining services incrementally while running hybrid&lt;/li&gt;
+                &lt;/ol&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        const services = [
+            {
+                id: &#039;auth&#039;,
+                name: &#039;Auth &amp; Identity Service&#039;,
+                icon: &#039;🛡️&#039;,
+                color: &#039;bg-purple-500&#039;,
+                description: &#039;User authentication, authorization, JWT management, role-based access control&#039;,
+                tech: [&#039;Node.js&#039;, &#039;JWT&#039;, &#039;Redis&#039;],
+                data: [&#039;Users&#039;, &#039;Sessions&#039;, &#039;Roles&#039;, &#039;Permissions&#039;],
+                apis: [&#039;/auth/login&#039;, &#039;/auth/register&#039;, &#039;/auth/verify&#039;, &#039;/auth/refresh&#039;]
+            },
+            {
+                id: &#039;wallet&#039;,
+                name: &#039;Wallet Service&#039;,
+                icon: &#039;💰&#039;,
+                color: &#039;bg-blue-500&#039;,
+                description: &#039;Crypto wallet management, balance tracking, address generation&#039;,
+                tech: [&#039;Node.js&#039;, &#039;Web3.js&#039;, &#039;Ethers.js&#039;],
+                data: [&#039;Wallets&#039;, &#039;Balances&#039;, &#039;Addresses&#039;],
+                apis: [&#039;/wallet/create&#039;, &#039;/wallet/balance&#039;, &#039;/wallet/addresses&#039;]
+            },
+            {
+                id: &#039;blockchain&#039;,
+                name: &#039;Blockchain Monitor Service&#039;,
+                icon: &#039;⛓️&#039;,
+                color: &#039;bg-green-500&#039;,
+                description: &#039;Real-time blockchain monitoring, deposit detection, transaction confirmation&#039;,
+                tech: [&#039;Node.js&#039;, &#039;Alchemy SDK&#039;, &#039;WebSocket&#039;],
+                data: [&#039;Transactions&#039;, &#039;Blocks&#039;, &#039;Confirmations&#039;],
+                apis: [&#039;/blockchain/monitor&#039;, &#039;/blockchain/status&#039;, &#039;/blockchain/history&#039;]
+            },
+            {
+                id: &#039;payment&#039;,
+                name: &#039;Payment Processing Service&#039;,
+                icon: &#039;⚡&#039;,
+                color: &#039;bg-yellow-500&#039;,
+                description: &#039;Fiat payments via Stripe, crypto withdrawals, currency conversion, fee calculation&#039;,
+                tech: [&#039;Node.js&#039;, &#039;Stripe SDK&#039;, &#039;CoinGecko API&#039;],
+                data: [&#039;Payments&#039;, &#039;Withdrawals&#039;, &#039;Fees&#039;, &#039;Conversions&#039;],
+                apis: [&#039;/payment/deposit&#039;, &#039;/payment/withdraw&#039;, &#039;/payment/convert&#039;]
+            },
+            {
+                id: &#039;kyc&#039;,
+                name: &#039;KYC/Compliance Service&#039;,
+                icon: &#039;👥&#039;,
+                color: &#039;bg-red-500&#039;,
+                description: &#039;Identity verification, document processing, compliance checks, risk scoring&#039;,
+                tech: [&#039;Node.js&#039;, &#039;AI/ML APIs&#039;],
+                data: [&#039;KYCRecords&#039;, &#039;Documents&#039;, &#039;VerificationStatus&#039;],
+                apis: [&#039;/kyc/submit&#039;, &#039;/kyc/verify&#039;, &#039;/kyc/status&#039;]
+            },
+            {
+                id: &#039;medical&#039;,
+                name: &#039;Medical Facility Service&#039;,
+                icon: &#039;🏥&#039;,
+                color: &#039;bg-pink-500&#039;,
+                description: &#039;Facility management, bed tracking, availability monitoring&#039;,
+                tech: [&#039;Node.js&#039;, &#039;PostgreSQL&#039;],
+                data: [&#039;Facilities&#039;, &#039;Beds&#039;, &#039;Departments&#039;],
+                apis: [&#039;/facilities/list&#039;, &#039;/beds/status&#039;, &#039;/departments/manage&#039;]
+            },
+            {
+                id: &#039;appointments&#039;,
+                name: &#039;Appointment Service&#039;,
+                icon: &#039;📅&#039;,
+                color: &#039;bg-indigo-500&#039;,
+                description: &#039;Scheduling, booking management, conflict resolution, reminders&#039;,
+                tech: [&#039;Node.js&#039;, &#039;Calendar APIs&#039;],
+                data: [&#039;Appointments&#039;, &#039;Schedules&#039;, &#039;Availability&#039;],
+                apis: [&#039;/appointments/book&#039;, &#039;/appointments/cancel&#039;, &#039;/appointments/list&#039;]
+            },
+            {
+                id: &#039;notification&#039;,
+                name: &#039;Notification Service&#039;,
+                icon: &#039;🔔&#039;,
+                color: &#039;bg-orange-500&#039;,
+                description: &#039;Email, SMS, push notifications, transaction alerts&#039;,
+                tech: [&#039;Node.js&#039;, &#039;SendGrid&#039;, &#039;FCM&#039;],
+                data: [&#039;Notifications&#039;, &#039;Templates&#039;, &#039;Preferences&#039;],
+                apis: [&#039;/notify/email&#039;, &#039;/notify/sms&#039;, &#039;/notify/push&#039;]
+            },
+            {
+                id: &#039;ai&#039;,
+                name: &#039;AI Agent Service&#039;,
+                icon: &#039;🤖&#039;,
+                color: &#039;bg-teal-500&#039;,
+                description: &#039;Claude/Ollama integration, chat support, automated responses&#039;,
+                tech: [&#039;Node.js&#039;, &#039;Anthropic SDK&#039;, &#039;Ollama&#039;],
+                data: [&#039;Conversations&#039;, &#039;AgentConfigs&#039;],
+                apis: [&#039;/ai/chat&#039;, &#039;/ai/analyze&#039;, &#039;/ai/support&#039;]
+            },
+            {
+                id: &#039;analytics&#039;,
+                name: &#039;Analytics &amp; Reporting Service&#039;,
+                icon: &#039;📊&#039;,
+                color: &#039;bg-cyan-500&#039;,
+                description: &#039;Transaction analytics, audit logs, dashboards, insights&#039;,
+                tech: [&#039;Node.js&#039;, &#039;TimescaleDB&#039;],
+                data: [&#039;AuditLogs&#039;, &#039;Metrics&#039;, &#039;Reports&#039;],
+                apis: [&#039;/analytics/dashboard&#039;, &#039;/analytics/reports&#039;, &#039;/analytics/logs&#039;]
+            }
+        ];
+
+        const servicesGrid = document.getElementById(&#039;services-grid&#039;);
+        const serviceDetails = document.getElementById(&#039;service-details&#039;);
+
+        services.forEach(service =&gt; {
+            const card = document.createElement(&#039;button&#039;);
+            card.className = `service-card p-4 rounded-lg ${service.color} text-white hover:shadow-lg`;
+            card.innerHTML = `
+                &lt;div class=&quot;text-4xl mb-2&quot;&gt;${service.icon}&lt;/div&gt;
+                &lt;div class=&quot;text-sm font-semibold text-center&quot;&gt;${service.name}&lt;/div&gt;
+            `;
+            card.onclick = () =&gt; showServiceDetails(service);
+            servicesGrid.appendChild(card);
+        });
+
+        function showServiceDetails(service) {
+            serviceDetails.classList.remove(&#039;hidden&#039;);
+            document.getElementById(&#039;service-icon&#039;).textContent = service.icon;
+            document.getElementById(&#039;service-name&#039;).textContent = service.name;
+            document.getElementById(&#039;service-description&#039;).textContent = service.description;
+            
+            const techList = document.getElementById(&#039;service-tech&#039;);
+            techList.innerHTML = service.tech.map(t =&gt; `
+                &lt;li class=&quot;flex items-center gap-2&quot;&gt;
+                    &lt;span class=&quot;w-1.5 h-1.5 bg-slate-400 rounded-full&quot;&gt;&lt;/span&gt;
+                    ${t}
+                &lt;/li&gt;
+            `).join(&#039;&#039;);
+            
+            const dataList = document.getElementById(&#039;service-data&#039;);
+            dataList.innerHTML = service.data.map(d =&gt; `
+                &lt;li class=&quot;flex items-center gap-2&quot;&gt;
+                    &lt;span&gt;💾&lt;/span&gt;
+                    ${d}
+                &lt;/li&gt;
+            `).join(&#039;&#039;);
+            
+            const apisList = document.getElementById(&#039;service-apis&#039;);
+            apisList.innerHTML = service.apis.map(api =&gt; `&lt;li class=&quot;truncate&quot;&gt;${api}&lt;/li&gt;`).join(&#039;&#039;);
+            
+            serviceDetails.scrollIntoView({ behavior: &#039;smooth&#039;, block: &#039;nearest&#039; });
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+        </div>
+    </div>
+    <script>
+        function copyCode() {
+            const codeElement = document.getElementById('code-content');
+            const textContent = codeElement.textContent;
+            navigator.clipboard.writeText(textContent).then(() => {
+                const button = document.querySelector('.copy-button');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
