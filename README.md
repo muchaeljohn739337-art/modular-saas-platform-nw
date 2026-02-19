@@ -1,5 +1,12 @@
 # Advancia PayLedger - Complete Healthcare Payment Platform
 
+![CI/CD Pipeline](https://github.com/muchaeljohn739337-art/modular-saas-platform-nw/workflows/CI/CD%20Pipeline/badge.svg)
+![Security Scan](https://github.com/muchaeljohn739337-art/modular-saas-platform-nw/workflows/Security%20Scan/badge.svg)
+![Automated Testing](https://github.com/muchaeljohn739337-art/modular-saas-platform-nw/workflows/Automated%20Testing/badge.svg)
+![Code Coverage](https://codecov.io/gh/muchaeljohn739337-art/modular-saas-platform-nw/branch/main/graph/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Node.js-green.svg)
+
 ## 🏥 Overview
 
 Advancia PayLedger is a comprehensive, enterprise-grade healthcare payment processing platform built with modern microservices architecture. This modular SaaS platform enables secure, HIPAA-compliant financial transactions, patient billing, insurance processing, and real-time payment monitoring for healthcare organizations.

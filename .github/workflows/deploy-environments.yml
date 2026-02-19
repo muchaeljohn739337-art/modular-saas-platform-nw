@@ -1,0 +1,175 @@
+name: Environment Deployments
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image-tag:
+        required: true
+        type: string
+      deploy-strategy:
+        required: false
+        type: string
+        default: "blue-green"
+    secrets:
+      KUBE_CONFIG:
+        required: true
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      VERCEL_TOKEN:
+        required: true
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "v1.28.0"
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Deploy to Kubernetes
+        run: |
+          export IMAGE_TAG=${{ inputs.image-tag }}
+          export ENVIRONMENT=${{ inputs.environment }}
+          export DEPLOY_STRATEGY=${{ inputs.deploy-strategy }}
+
+          # Apply environment-specific configurations
+          kubectl apply -f infra/k8s/namespaces/${{ inputs.environment }}.yaml
+          kubectl apply -f infra/k8s/configmaps/${{ inputs.environment }}.yaml
+          kubectl apply -f infra/k8s/secrets/${{ inputs.environment }}.yaml
+
+          # Deploy based on strategy
+          if [ "${{ inputs.deploy-strategy }}" = "blue-green" ]; then
+            kubectl apply -f infra/k8s/blue-green-deployment.yaml
+            kubectl patch rollout advancia-backend-${{ inputs.environment }} -p '{"spec":{"template":{"spec":{"containers":[{"name":"backend","image":"ghcr.io/${{ github.repository }}:${{ inputs.image-tag }}"}]}}}}'
+          elif [ "${{ inputs.deploy-strategy }}" = "canary" ]; then
+            kubectl apply -f infra/k8s/canary-deployment.yaml
+            kubectl patch rollout advancia-backend-${{ inputs.environment }} -p '{"spec":{"template":{"spec":{"containers":[{"name":"backend","image":"ghcr.io/${{ github.repository }}:${{ inputs.image-tag }}"}]}}}}'
+          else
+            kubectl apply -f infra/k8s/deployment.yaml
+            kubectl set image deployment/advancia-backend-${{ inputs.environment }} backend=ghcr.io/${{ github.repository }}:${{ inputs.image-tag }}
+          fi
+
+      - name: Wait for deployment
+        run: |
+          if [ "${{ inputs.deploy-strategy }}" = "blue-green" ] || [ "${{ inputs.deploy-strategy }}" = "canary" ]; then
+            kubectl wait --for=condition=Complete rollout advancia-backend-${{ inputs.environment }} --timeout=600s
+          else
+            kubectl rollout status deployment/advancia-backend-${{ inputs.environment }} --timeout=600s
+          fi
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          export NEXT_PUBLIC_API_URL=${{ inputs.environment == 'prod' && 'https://api.advancia.com' || inputs.environment == 'staging' && 'https://staging-api.advancia.com' || 'https://dev-api.advancia.com' }}
+          export NEXT_PUBLIC_ENVIRONMENT=${{ inputs.environment }}
+          npm run build
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./frontend
+          vercel-args: ${{ inputs.environment == 'prod' && '--prod' || '--preview' }}
+
+  deploy-workers:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Deploy Cloudflare Workers
+        run: |
+          # Deploy API Gateway Worker
+          cd backend-api/cloudflare-workers
+          npx wrangler deploy --env ${{ inputs.environment }}
+
+          # Deploy AI Worker
+          cd ../..
+          npx wrangler deploy healthcare-ai-worker.js --env ${{ inputs.environment }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+  post-deployment:
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend, deploy-workers]
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run post-deployment health checks
+        run: |
+          # Health check URLs
+          API_URL="${{ inputs.environment == 'prod' && 'https://api.advancia.com' || inputs.environment == 'staging' && 'https://staging-api.advancia.com' || 'https://dev-api.advancia.com' }}"
+          FRONTEND_URL="${{ inputs.environment == 'prod' && 'https://advancia.com' || inputs.environment == 'staging' && 'https://staging.advancia.com' || 'https://dev.advancia.com' }}"
+
+          # Check API health
+          for i in {1..30}; do
+            if curl -f "$API_URL/health" > /dev/null 2>&1; then
+              echo "API health check passed"
+              break
+            fi
+            echo "Waiting for API to be healthy... ($i/30)"
+            sleep 10
+          done
+
+          # Check frontend health
+          for i in {1..30}; do
+            if curl -f "$FRONTEND_URL" > /dev/null 2>&1; then
+              echo "Frontend health check passed"
+              break
+            fi
+            echo "Waiting for frontend to be healthy... ($i/30)"
+            sleep 10
+          done
+
+      - name: Run smoke tests
+        run: |
+          npm run test:smoke -- --baseUrl="${{ inputs.environment == 'prod' && 'https://api.advancia.com' || inputs.environment == 'staging' && 'https://staging-api.advancia.com' || 'https://dev-api.advancia.com' }}"
+
+      - name: Update deployment status
+        run: |
+          # Update deployment tracking in database
+          echo "Deployment completed successfully for ${{ inputs.environment }} environment"
+          # This would typically make an API call to update deployment status
