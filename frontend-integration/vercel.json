@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "build",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://advancia-payledger-api.advancia-platform.workers.dev",
+    "NEXT_PUBLIC_AI_URL": "https://advancia-healthcare-ai.advancia-platform.workers.dev",
+    "NEXT_PUBLIC_ENVIRONMENT": "production"
+  }
+}
