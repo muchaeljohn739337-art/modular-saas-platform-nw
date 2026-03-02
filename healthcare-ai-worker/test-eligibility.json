@@ -1,0 +1,13 @@
+{
+  "patientInfo": {
+    "name": "John Doe",
+    "dateOfBirth": "1985-06-15",
+    "insuranceId": "INS987654",
+    "ssn": "123-45-6789"
+  },
+  "service": {
+    "type": "specialist consultation",
+    "provider": "Dr. Smith Medical Center",
+    "estimatedCost": 250
+  }
+}

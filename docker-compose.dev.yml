@@ -1,0 +1,141 @@
+version: '3.8'
+
+services:
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: advancia-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - advancia-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: advancia-backend
+    environment:
+      DATABASE_URL: postgresql://neondb_owner:npg_nECsrJB8L2IA@ep-withered-sun-ahto03l2.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-secret-key-change-in-production
+      JWT_REFRESH_SECRET: dev-refresh-secret-key-change-in-production
+      FRONTEND_URL: http://localhost:3000
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    ports:
+      - "3001:3001"
+    depends_on:
+      - redis
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - advancia-network
+    command: npm run dev
+
+  # Authentication Service
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: advancia-auth
+    environment:
+      DATABASE_URL: postgresql://neondb_owner:npg_nECsrJB8L2IA@ep-withered-sun-ahto03l2.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      JWT_SECRET: dev-secret-key-change-in-production
+      JWT_REFRESH_SECRET: dev-refresh-secret-key-change-in-production
+      FRONTEND_URL: http://localhost:3000
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    ports:
+      - "3002:3002"
+    depends_on:
+      - redis
+    volumes:
+      - ./services/auth-service:/app
+      - /app/node_modules
+    networks:
+      - advancia-network
+    command: npm run dev
+
+  # Billing Service
+  billing-service:
+    build:
+      context: ./services/billing-service
+      dockerfile: Dockerfile
+    container_name: advancia-billing
+    environment:
+      DATABASE_URL: postgresql://neondb_owner:npg_nECsrJB8L2IA@ep-withered-sun-ahto03l2.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      JWT_SECRET: dev-secret-key-change-in-production
+      FRONTEND_URL: http://localhost:3000
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    ports:
+      - "3003:3003"
+    depends_on:
+      - redis
+    volumes:
+      - ./services/billing-service:/app
+      - /app/node_modules
+    networks:
+      - advancia-network
+    command: npm run dev
+
+  # Payment Service
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+    container_name: advancia-payment
+    environment:
+      DATABASE_URL: postgresql://neondb_owner:npg_nECsrJB8L2IA@ep-withered-sun-ahto03l2.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      JWT_SECRET: dev-secret-key-change-in-production
+      FRONTEND_URL: http://localhost:3000
+      STRIPE_SECRET_KEY: sk_test_dev_key
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    ports:
+      - "3004:3004"
+    depends_on:
+      - redis
+    volumes:
+      - ./services/payment-service:/app
+      - /app/node_modules
+    networks:
+      - advancia-network
+    command: npm run dev
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: advancia-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - auth-service
+      - billing-service
+      - payment-service
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - advancia-network
+    command: npm run dev
+
+volumes:
+  redis_data:
+
+
+networks:
+  advancia-network:
+    driver: bridge

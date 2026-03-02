@@ -1,0 +1,9 @@
+{
+  "payment": {
+    "amount": 15000,
+    "currency": "USD",
+    "description": "Urgent emergency surgery payment",
+    "recipient": "Test Hospital",
+    "patientId": "PAT12345"
+  }
+}

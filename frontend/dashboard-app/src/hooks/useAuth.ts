@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../utils/fetcher";
+import { toast } from "react-hot-toast";
 
 interface User {
   id: string;

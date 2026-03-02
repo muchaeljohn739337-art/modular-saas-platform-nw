@@ -1,0 +1,17 @@
+{
+  "name": "advancia-healthcare-ai",
+  "version": "1.0.0",
+  "description": "Advancia Healthcare AI - Cloudflare Workers",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev --port 8788",
+    "deploy": "wrangler deploy",
+    "start": "wrangler dev --port 8788"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

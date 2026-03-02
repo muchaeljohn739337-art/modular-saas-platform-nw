@@ -1,0 +1,6 @@
+{
+  "amount": "100.00",
+  "currency": "USD",
+  "description": "Test payment",
+  "recipient": "Merchant Store"
+}

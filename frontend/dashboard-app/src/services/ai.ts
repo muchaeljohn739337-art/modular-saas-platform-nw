@@ -1,4 +1,4 @@
-import { apiClient } from "./index";
+import { apiClients } from "./index";
 
 // AI Orchestrator Service Types
 export interface AgentTaskRequest {

@@ -1,0 +1,647 @@
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+import { z } from 'zod';
+import { authenticateToken } from '../middleware/auth';
+import {
+  walletConnectLimiter,
+  balanceFetchLimiter,
+  historyFetchLimiter,
+} from '../middleware/walletRateLimiters';
+import {
+  validateWalletAddress,
+  verifyWalletOwnership,
+  generateWalletChallenge,
+  normalizeAddress,
+} from '../utils/walletValidator';
+import {
+  getBalance,
+  calculateUSDValue,
+  batchGetBalances,
+} from '../services/blockchainService';
+import { logger } from '../utils/logger';
+import { redis } from '../utils/redis';
+
+const router = express.Router();
+const prisma = new PrismaClient();
+
+// ============================================
+// VALIDATION SCHEMAS
+// ============================================
+
+const connectWalletSchema = z.object({
+  address: z.string().min(32).max(66),
+  blockchain: z.enum(['SOLANA', 'ETHEREUM', 'POLYGON', 'BASE']),
+  walletType: z.string().optional(),
+  signature: z.string().min(1),
+  message: z.string().min(1),
+});
+
+const disconnectWalletSchema = z.object({
+  walletId: z.string().cuid(),
+});
+
+const setPrimaryWalletSchema = z.object({
+  walletId: z.string().cuid(),
+});
+
+const historyQuerySchema = z.object({
+  walletId: z.string().cuid().optional(),
+  limit: z.coerce.number().min(1).max(100).default(50),
+  offset: z.coerce.number().min(0).default(0),
+});
+
+// ============================================
+// GET /api/wallet/challenge
+// ============================================
+
+router.get('/challenge', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const challenge = generateWalletChallenge(userId);
+    
+    // Store challenge in Redis with 5-minute expiry
+    const challengeKey = `wallet_challenge:${userId}`;
+    await redis.setEx(challengeKey, 300, challenge);
+    
+    res.json({ message: challenge });
+  } catch (error) {
+    logger.error('Challenge generation error:', error);
+    res.status(500).json({ error: 'Failed to generate challenge' });
+  }
+});
+
+// ============================================
+// POST /api/wallet/connect
+// ============================================
+
+router.post('/connect', authenticateToken, walletConnectLimiter, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const { address, blockchain, walletType, signature, message } = connectWalletSchema.parse(req.body);
+
+    // Validate wallet address format
+    const addressValidation = validateWalletAddress(address, blockchain);
+    if (!addressValidation.valid) {
+      return res.status(400).json({ error: addressValidation.error });
+    }
+
+    // Verify the challenge message was issued by us
+    const challengeKey = `wallet_challenge:${userId}`;
+    const storedChallenge = await redis.get(challengeKey);
+    
+    if (!storedChallenge || storedChallenge !== message) {
+      return res.status(400).json({ 
+        error: 'Invalid challenge message',
+        message: 'Please request a new challenge',
+      });
+    }
+
+    // Verify signature proves wallet ownership
+    const signatureValidation = verifyWalletOwnership(
+      address,
+      blockchain,
+      message,
+      signature
+    );
+
+    if (!signatureValidation.valid) {
+      logger.warn('Wallet signature verification failed', {
+        userId,
+        address,
+        blockchain,
+        error: signatureValidation.error,
+      });
+      return res.status(400).json({ error: signatureValidation.error });
+    }
+
+    // Normalize address (checksummed for Ethereum)
+    const normalizedAddress = normalizeAddress(address, blockchain);
+
+    // Use transaction to prevent race conditions
+    const wallet = await prisma.$transaction(async (tx) => {
+      // Check if wallet already exists
+      const existing = await tx.wallet.findUnique({
+        where: { address: normalizedAddress },
+      });
+
+      if (existing) {
+        if (existing.userId !== userId) {
+          throw new Error('Wallet already connected to another account');
+        }
+        
+        // Reactivate if previously disconnected
+        if (!existing.isActive) {
+          return await tx.wallet.update({
+            where: { id: existing.id },
+            data: { isActive: true },
+          });
+        }
+        
+        return existing;
+      }
+
+      // Check if user has reached wallet limit
+      const walletCount = await tx.wallet.count({
+        where: { userId, isActive: true },
+      });
+
+      if (walletCount >= 10) {
+        throw new Error('Maximum wallet limit reached (10 wallets)');
+      }
+
+      // Check if this is the first wallet (make it primary)
+      const isPrimary = walletCount === 0;
+
+      // Create new wallet connection
+      return await tx.wallet.create({
+        data: {
+          userId,
+          address: normalizedAddress,
+          blockchain,
+          walletType: walletType || 'EXTERNAL',
+          isPrimary,
+          isActive: true,
+        },
+      });
+    });
+
+    // Delete used challenge
+    await redis.del(challengeKey);
+
+    // Fetch initial balance asynchronously (don't block response)
+    setImmediate(async () => {
+      try {
+        const balance = await getBalance(normalizedAddress, blockchain);
+        const balanceUSD = await calculateUSDValue(balance, blockchain);
+
+        await prisma.wallet.update({
+          where: { id: wallet.id },
+          data: { balanceUSD, lastSyncAt: new Date() },
+        });
+
+        logger.info('Wallet balance synced', {
+          walletId: wallet.id,
+          balance,
+          balanceUSD,
+        });
+      } catch (error) {
+        logger.error('Initial balance fetch failed', {
+          walletId: wallet.id,
+          error,
+        });
+      }
+    });
+
+    logger.info('Wallet connected', {
+      userId,
+      walletId: wallet.id,
+      blockchain,
+      address: normalizedAddress,
+    });
+
+    res.json({
+      wallet: {
+        id: wallet.id,
+        address: wallet.address,
+        blockchain: wallet.blockchain,
+        walletType: wallet.walletType,
+        isPrimary: wallet.isPrimary,
+        isActive: wallet.isActive,
+        createdAt: wallet.createdAt,
+      },
+      message: 'Wallet connected successfully. Balance sync in progress.',
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        error: 'Invalid input', 
+        details: error.errors,
+      });
+    }
+    
+    if (error instanceof Error) {
+      if (error.message.includes('already connected')) {
+        return res.status(400).json({ error: error.message });
+      }
+      if (error.message.includes('Maximum wallet limit')) {
+        return res.status(400).json({ error: error.message });
+      }
+    }
+
+    logger.error('Wallet connect error:', error);
+    res.status(500).json({ error: 'Failed to connect wallet' });
+  }
+});
+
+// ============================================
+// POST /api/wallet/disconnect
+// ============================================
+
+router.post('/disconnect', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const { walletId } = disconnectWalletSchema.parse(req.body);
+
+    const wallet = await prisma.wallet.findUnique({
+      where: { id: walletId },
+    });
+
+    if (!wallet) {
+      return res.status(404).json({ error: 'Wallet not found' });
+    }
+
+    if (wallet.userId !== userId) {
+      logger.warn('Unauthorized wallet disconnect attempt', {
+        userId,
+        walletId,
+        actualUserId: wallet.userId,
+      });
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    if (!wallet.isActive) {
+      return res.status(400).json({ error: 'Wallet already disconnected' });
+    }
+
+    // Use transaction to handle primary wallet reassignment
+    await prisma.$transaction(async (tx) => {
+      // Deactivate wallet
+      await tx.wallet.update({
+        where: { id: walletId },
+        data: { 
+          isActive: false,
+          isPrimary: false,
+        },
+      });
+
+      // If this was the primary wallet, assign another active wallet as primary
+      if (wallet.isPrimary) {
+        const nextWallet = await tx.wallet.findFirst({
+          where: {
+            userId,
+            isActive: true,
+            id: { not: walletId },
+          },
+          orderBy: { createdAt: 'asc' },
+        });
+
+        if (nextWallet) {
+          await tx.wallet.update({
+            where: { id: nextWallet.id },
+            data: { isPrimary: true },
+          });
+        }
+      }
+    });
+
+    logger.info('Wallet disconnected', { userId, walletId });
+
+    res.json({ message: 'Wallet disconnected successfully' });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Invalid wallet ID' });
+    }
+
+    logger.error('Wallet disconnect error:', error);
+    res.status(500).json({ error: 'Failed to disconnect wallet' });
+  }
+});
+
+// ============================================
+// POST /api/wallet/set-primary
+// ============================================
+
+router.post('/set-primary', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const { walletId } = setPrimaryWalletSchema.parse(req.body);
+
+    const wallet = await prisma.wallet.findUnique({
+      where: { id: walletId },
+    });
+
+    if (!wallet) {
+      return res.status(404).json({ error: 'Wallet not found' });
+    }
+
+    if (wallet.userId !== userId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    if (!wallet.isActive) {
+      return res.status(400).json({ error: 'Cannot set inactive wallet as primary' });
+    }
+
+    if (wallet.isPrimary) {
+      return res.status(400).json({ error: 'Wallet is already primary' });
+    }
+
+    // Use transaction to ensure only one primary wallet
+    await prisma.$transaction(async (tx) => {
+      // Remove primary status from all user wallets
+      await tx.wallet.updateMany({
+        where: { userId, isPrimary: true },
+        data: { isPrimary: false },
+      });
+
+      // Set new primary wallet
+      await tx.wallet.update({
+        where: { id: walletId },
+        data: { isPrimary: true },
+      });
+    });
+
+    logger.info('Primary wallet updated', { userId, walletId });
+
+    res.json({ message: 'Primary wallet updated successfully' });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Invalid wallet ID' });
+    }
+
+    logger.error('Set primary wallet error:', error);
+    res.status(500).json({ error: 'Failed to set primary wallet' });
+  }
+});
+
+// ============================================
+// GET /api/wallet/balance
+// ============================================
+
+router.get('/balance', authenticateToken, balanceFetchLimiter, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const { refresh } = req.query;
+    const useCache = refresh !== 'true';
+
+    const wallets = await prisma.wallet.findMany({
+      where: { userId, isActive: true },
+      select: {
+        id: true,
+        address: true,
+        blockchain: true,
+        walletType: true,
+        isPrimary: true,
+        balanceUSD: true,
+        lastSyncAt: true,
+      },
+    });
+
+    if (wallets.length === 0) {
+      return res.json({
+        wallets: [],
+        totalUSD: 0,
+        message: 'No active wallets found',
+      });
+    }
+
+    // Batch fetch balances
+    const balanceResults = await batchGetBalances(
+      wallets.map(w => ({ address: w.address, blockchain: w.blockchain }))
+    );
+
+    // Update database with new balances (in background)
+    const updatePromises = balanceResults.map(async (result, index) => {
+      const wallet = wallets[index];
+      if (!result.error && result.balanceUSD > 0) {
+        try {
+          await prisma.wallet.update({
+            where: { id: wallet.id },
+            data: {
+              balanceUSD: result.balanceUSD,
+              lastSyncAt: new Date(),
+            },
+          });
+        } catch (error) {
+          logger.error('Balance update failed', { walletId: wallet.id, error });
+        }
+      }
+    });
+
+    // Don't wait for updates to complete
+    Promise.allSettled(updatePromises);
+
+    const walletsWithBalance = wallets.map((wallet, index) => ({
+      walletId: wallet.id,
+      address: wallet.address,
+      blockchain: wallet.blockchain,
+      walletType: wallet.walletType,
+      isPrimary: wallet.isPrimary,
+      balance: balanceResults[index].balance,
+      balanceUSD: balanceResults[index].balanceUSD,
+      lastSyncAt: wallet.lastSyncAt,
+      error: balanceResults[index].error,
+    }));
+
+    const totalUSD = walletsWithBalance.reduce(
+      (sum, w) => sum + (w.error ? 0 : w.balanceUSD),
+      0
+    );
+
+    res.json({
+      wallets: walletsWithBalance,
+      totalUSD,
+      syncedAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    logger.error('Balance fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch balance' });
+  }
+});
+
+// ============================================
+// GET /api/wallet/list
+// ============================================
+
+router.get('/list', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const { includeInactive } = req.query;
+
+    const wallets = await prisma.wallet.findMany({
+      where: {
+        userId,
+        ...(includeInactive !== 'true' && { isActive: true }),
+      },
+      select: {
+        id: true,
+        address: true,
+        blockchain: true,
+        walletType: true,
+        isPrimary: true,
+        isActive: true,
+        balanceUSD: true,
+        lastSyncAt: true,
+        createdAt: true,
+      },
+      orderBy: [
+        { isPrimary: 'desc' },
+        { createdAt: 'desc' },
+      ],
+    });
+
+    res.json({ wallets });
+  } catch (error) {
+    logger.error('Wallet list error:', error);
+    res.status(500).json({ error: 'Failed to fetch wallets' });
+  }
+});
+
+// ============================================
+// GET /api/wallet/history
+// ============================================
+
+router.get('/history', authenticateToken, historyFetchLimiter, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const { walletId, limit, offset } = historyQuerySchema.parse(req.query);
+
+    // If walletId provided, verify ownership
+    if (walletId) {
+      const wallet = await prisma.wallet.findUnique({
+        where: { id: walletId },
+        select: { userId: true },
+      });
+
+      if (!wallet || wallet.userId !== userId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+    }
+
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where: {
+          userId,
+          ...(walletId && { walletId }),
+          paymentMethod: 'CRYPTO',
+        },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: offset,
+        select: {
+          id: true,
+          amount: true,
+          currency: true,
+          status: true,
+          type: true,
+          description: true,
+          createdAt: true,
+          wallet: {
+            select: {
+              id: true,
+              address: true,
+              blockchain: true,
+            },
+          },
+          invoice: {
+            select: {
+              id: true,
+              invoiceNumber: true,
+              amount: true,
+            },
+          },
+        },
+      }),
+      prisma.transaction.count({
+        where: {
+          userId,
+          ...(walletId && { walletId }),
+          paymentMethod: 'CRYPTO',
+        },
+      }),
+    ]);
+
+    res.json({
+      transactions,
+      pagination: {
+        total,
+        limit,
+        offset,
+        hasMore: offset + limit < total,
+      },
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        error: 'Invalid query parameters',
+        details: error.errors,
+      });
+    }
+
+    logger.error('Transaction history error:', error);
+    res.status(500).json({ error: 'Failed to fetch history' });
+  }
+});
+
+// ============================================
+// GET /api/wallet/:walletId
+// ============================================
+
+router.get('/:walletId', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const { walletId } = req.params;
+
+    const wallet = await prisma.wallet.findUnique({
+      where: { id: walletId },
+      select: {
+        id: true,
+        address: true,
+        blockchain: true,
+        walletType: true,
+        isPrimary: true,
+        isActive: true,
+        balanceUSD: true,
+        lastSyncAt: true,
+        createdAt: true,
+        userId: true,
+      },
+    });
+
+    if (!wallet) {
+      return res.status(404).json({ error: 'Wallet not found' });
+    }
+
+    if (wallet.userId !== userId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    // Fetch fresh balance
+    try {
+      const balance = await getBalance(wallet.address, wallet.blockchain);
+      const balanceUSD = await calculateUSDValue(balance, wallet.blockchain);
+
+      // Update in background
+      setImmediate(async () => {
+        await prisma.wallet.update({
+          where: { id: walletId },
+          data: { balanceUSD, lastSyncAt: new Date() },
+        });
+      });
+
+      const { userId: _, ...walletData } = wallet;
+
+      res.json({
+        ...walletData,
+        balance,
+        balanceUSD,
+      });
+    } catch (error) {
+      logger.error('Balance fetch failed for wallet detail', { walletId, error });
+      
+      const { userId: _, ...walletData } = wallet;
+      
+      res.json({
+        ...walletData,
+        balance: 0,
+        balanceUSD: wallet.balanceUSD || 0,
+        error: 'Failed to fetch current balance',
+      });
+    }
+  } catch (error) {
+    logger.error('Wallet detail error:', error);
+    res.status(500).json({ error: 'Failed to fetch wallet details' });
+  }
+});
+
+export default router;

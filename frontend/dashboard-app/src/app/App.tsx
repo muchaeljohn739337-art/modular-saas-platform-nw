@@ -17,12 +17,11 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router}>
-        <div className="min-h-screen bg-gray-50">
-          <Toaster position="top-right" />
-          {/* Router will render the appropriate layout and page */}
-        </div>
-      </RouterProvider>
+      <RouterProvider router={router} />
+      <div className="min-h-screen bg-gray-50">
+        <Toaster position="top-right" />
+        {/* Router will render the appropriate layout and page */}
+      </div>
     </QueryClientProvider>
   );
 }
