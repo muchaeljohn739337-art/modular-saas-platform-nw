@@ -1,0 +1,15 @@
+name = "advancia-healthcare-ai"
+compatibility_date = "2025-07-18"
+main = "src/index.js"
+
+[env.production]
+routes = [
+  { pattern = "ai.advanciapayledger.com/*", zone_name = "advanciapayledger.com" }
+]
+vars = { ENVIRONMENT = "production" }
+
+[env.staging]
+routes = [
+  { pattern = "staging-ai.advanciapayledger.com/*", zone_name = "advanciapayledger.com" }
+]
+vars = { ENVIRONMENT = "staging" }

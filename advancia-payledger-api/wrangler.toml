@@ -1,0 +1,15 @@
+name = "advancia-payledger-api"
+compatibility_date = "2026-02-21"
+main = "src/index.js"
+
+[env.production]
+routes = [
+  { pattern = "api.advanciapayledger.com/*", zone_name = "advanciapayledger.com" }
+]
+vars = { ENVIRONMENT = "production" }
+
+[env.staging]
+routes = [
+  { pattern = "staging-api.advanciapayledger.com/*", zone_name = "advanciapayledger.com" }
+]
+vars = { ENVIRONMENT = "staging" }

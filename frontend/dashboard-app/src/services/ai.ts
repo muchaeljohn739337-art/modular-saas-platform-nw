@@ -1,4 +1,5 @@
 import { apiClients } from "./index";
+import { ApiResponse, QueryParams } from "../../../lib/api";
 
 // AI Orchestrator Service Types
 export interface AgentTaskRequest {
@@ -62,7 +63,7 @@ export interface AgentStats {
 
 // AI Orchestrator API Methods
 export class AIService {
-  private client = apiClient;
+  private client = apiClients.ai;
 
   async runAgent(taskData: AgentTaskRequest): Promise<ApiResponse<AgentTask>> {
     return this.client.post<AgentTask>("/ai/agents/run", taskData);
