@@ -1,4 +1,9 @@
-import { apiClient } from "./index";
+import { api, ApiResponse } from "../../../lib/api";
+
+// Query parameters type
+interface QueryParams {
+  [key: string]: any;
+}
 
 // Web3 Service Types
 export interface CreateWalletRequest {
@@ -81,9 +86,11 @@ export interface Web3Stats {
 
 // Web3 Service API Methods
 export class Web3Service {
-  private client = apiClient;
+  private client = api;
 
-  async createWallet(walletData: CreateWalletRequest): Promise<ApiResponse<Wallet>> {
+  async createWallet(
+    walletData: CreateWalletRequest,
+  ): Promise<ApiResponse<Wallet>> {
     return this.client.post<Wallet>("/web3/wallets", walletData);
   }
 
@@ -91,7 +98,10 @@ export class Web3Service {
     return this.client.get<Wallet>(`/web3/wallets/${walletId}`);
   }
 
-  async updateWallet(walletId: string, walletData: Partial<Wallet>): Promise<ApiResponse<Wallet>> {
+  async updateWallet(
+    walletId: string,
+    walletData: Partial<Wallet>,
+  ): Promise<ApiResponse<Wallet>> {
     return this.client.patch<Wallet>(`/web3/wallets/${walletId}`, walletData);
   }
 
@@ -103,19 +113,29 @@ export class Web3Service {
     return this.client.get<Wallet[]>("/web3/wallets", params);
   }
 
-  async getWalletBalance(walletId: string): Promise<ApiResponse<{ balance: string; address: string }>> {
-    return this.client.get<{ balance: string; address: string }>(`/web3/wallets/${walletId}/balance`);
+  async getWalletBalance(
+    walletId: string,
+  ): Promise<ApiResponse<{ balance: string; address: string }>> {
+    return this.client.get<{ balance: string; address: string }>(
+      `/web3/wallets/${walletId}/balance`,
+    );
   }
 
-  async sendTransaction(transactionData: TransactionRequest): Promise<ApiResponse<Transaction>> {
+  async sendTransaction(
+    transactionData: TransactionRequest,
+  ): Promise<ApiResponse<Transaction>> {
     return this.client.post<Transaction>("/web3/transactions", transactionData);
   }
 
-  async getTransaction(transactionId: string): Promise<ApiResponse<Transaction>> {
+  async getTransaction(
+    transactionId: string,
+  ): Promise<ApiResponse<Transaction>> {
     return this.client.get<Transaction>(`/web3/transactions/${transactionId}`);
   }
 
-  async listTransactions(params?: QueryParams): Promise<ApiResponse<Transaction[]>> {
+  async listTransactions(
+    params?: QueryParams,
+  ): Promise<ApiResponse<Transaction[]>> {
     return this.client.get<Transaction[]>("/web3/transactions", params);
   }
 
@@ -134,7 +154,9 @@ export class Web3Service {
     return this.client.get<SmartContract>(`/web3/contracts/${contractId}`);
   }
 
-  async listContracts(params?: QueryParams): Promise<ApiResponse<SmartContract[]>> {
+  async listContracts(
+    params?: QueryParams,
+  ): Promise<ApiResponse<SmartContract[]>> {
     return this.client.get<SmartContract[]>("/web3/contracts", params);
   }
 
@@ -147,7 +169,10 @@ export class Web3Service {
     data?: string;
     value: string;
   }): Promise<ApiResponse<{ gas_estimate: number; gas_price: string }>> {
-    return this.client.post<{ gas_estimate: number; gas_price: string }>("/web3/estimate-gas", transactionData);
+    return this.client.post<{ gas_estimate: number; gas_price: string }>(
+      "/web3/estimate-gas",
+      transactionData,
+    );
   }
 }
 

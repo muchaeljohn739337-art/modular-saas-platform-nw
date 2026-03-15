@@ -41,17 +41,44 @@ const updateProfileValidation = [
 
 export function createAuthRoutes(authController: AuthController): Router {
   // Public routes
-  router.post('/register', validateRequest(registerValidation), authController.register);
-  router.post('/login', validateRequest(loginValidation), authController.login);
-  router.post('/refresh-token', authController.refreshToken);
-  router.post('/forgot-password', validateRequest(forgotPasswordValidation), authController.forgotPassword);
-  router.post('/reset-password', validateRequest(resetPasswordValidation), authController.resetPassword);
+  router.post(
+    "/register",
+    registerValidation,
+    validateRequest,
+    authController.register,
+  );
+  router.post("/login", loginValidation, validateRequest, authController.login);
+  router.post("/refresh-token", authController.refreshToken);
+  router.post(
+    "/forgot-password",
+    forgotPasswordValidation,
+    validateRequest,
+    authController.forgotPassword,
+  );
+  router.post(
+    "/reset-password",
+    resetPasswordValidation,
+    validateRequest,
+    authController.resetPassword,
+  );
 
   // Protected routes
-  router.post('/logout', authenticateToken, authController.logout);
-  router.post('/change-password', authenticateToken, validateRequest(changePasswordValidation), authController.changePassword);
-  router.get('/profile', authenticateToken, authController.getProfile);
-  router.put('/profile', authenticateToken, validateRequest(updateProfileValidation), authController.updateProfile);
+  router.post("/logout", authenticateToken, authController.logout);
+  router.post(
+    "/change-password",
+    authenticateToken,
+    changePasswordValidation,
+    validateRequest,
+    authController.changePassword,
+  );
+  router.get("/profile", authenticateToken, authController.getProfile);
+  router.put(
+    "/profile",
+    authenticateToken,
+    updateProfileValidation,
+    validateRequest,
+    authController.updateProfile,
+  );
 
   return router;
 }

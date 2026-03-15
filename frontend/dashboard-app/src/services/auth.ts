@@ -1,4 +1,4 @@
-import { apiClient } from "./index";
+import { api, ApiResponse } from "../../../lib/api";
 
 // Auth Service Types
 export interface LoginRequest {
@@ -11,7 +11,7 @@ export interface LoginResponse {
   user: {
     id: string;
     email: string;
-    name: Service;
+    name: string;
     role: string;
     tenant_id: string;
     created_at: string;
@@ -63,17 +63,21 @@ export interface UpdateUserRequest {
 
 // Auth Service API Methods
 export class AuthService {
-  private client = apiClient;
+  private client = api;
 
   async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     return this.client.post<LoginResponse>("/auth/login", credentials);
   }
 
-  async register(userData: RegisterRequest): Promise<ApiResponse<LoginResponse>> {
+  async register(
+    userData: RegisterRequest,
+  ): Promise<ApiResponse<LoginResponse>> {
     return this.client.post<LoginResponse>("/auth/register", userData);
   }
 
-  async refreshToken(tokenData: RefreshTokenRequest): Promise<ApiResponse<RefreshTokenResponse>> {
+  async refreshToken(
+    tokenData: RefreshTokenRequest,
+  ): Promise<ApiResponse<RefreshTokenResponse>> {
     return this.client.post<RefreshTokenResponse>("/auth/refresh", tokenData);
   }
 
@@ -85,16 +89,29 @@ export class AuthService {
     return this.client.get<User>("/auth/me");
   }
 
-  async updateUser(userId: string, userData: UpdateUserRequest): Promise<ApiResponse<User>> {
+  async updateUser(
+    userId: string,
+    userData: UpdateUserRequest,
+  ): Promise<ApiResponse<User>> {
     return this.client.patch<User>(`/auth/users/${userId}`, userData);
   }
 
-  async changePassword(userId: string, passwordData: { current_password: string; new_password: string }): Promise<ApiResponse<null>> {
-    return this.client.post<null>(`/auth/users/${userId}/change-password`, passwordData);
+  async changePassword(
+    userId: string,
+    passwordData: { current_password: string; new_password: string },
+  ): Promise<ApiResponse<null>> {
+    return this.client.post<null>(
+      `/auth/users/${userId}/change-password`,
+      passwordData,
+    );
   }
 
-  async resetPassword(email: string): Promise<ApiResponse<{ message: string }>> {
-    return this.client.post<{ message: string }>("/auth/reset-password", { email });
+  async resetPassword(
+    email: string,
+  ): Promise<ApiResponse<{ message: string }>> {
+    return this.client.post<{ message: string }>("/auth/reset-password", {
+      email,
+    });
   }
 }
 

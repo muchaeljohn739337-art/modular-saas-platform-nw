@@ -1,9 +1,19 @@
-import { apiClients } from "./index";
-import { ApiResponse, QueryParams } from "../../../lib/api";
+import { api, ApiResponse } from "../../../lib/api";
+
+// Query parameters type
+interface QueryParams {
+  [key: string]: any;
+}
 
 // AI Orchestrator Service Types
 export interface AgentTaskRequest {
-  agent_type: "payment_processing" | "fraud_detection" | "compliance_check" | "data_analysis" | "customer_support" | "report_generation";
+  agent_type:
+    | "payment_processing"
+    | "fraud_detection"
+    | "compliance_check"
+    | "data_analysis"
+    | "customer_support"
+    | "report_generation";
   tenant_id?: string;
   user_id?: string;
   parameters: Record<string, any>;
@@ -63,7 +73,7 @@ export interface AgentStats {
 
 // AI Orchestrator API Methods
 export class AIService {
-  private client = apiClients.ai;
+  private client = api;
 
   async runAgent(taskData: AgentTaskRequest): Promise<ApiResponse<AgentTask>> {
     return this.client.post<AgentTask>("/ai/agents/run", taskData);
@@ -89,8 +99,13 @@ export class AIService {
     return this.client.get<AgentConfig[]>("/ai/agents", params);
   }
 
-  async updateAgent(agentId: string, agentData: Partial<AgentConfig>): Promise<ApiResponse<AgentConfig>> {
+  async updateAgent(
+    agentId: string,
+    agentData: Partial<AgentConfig>,
+  ): Promise<ApiResponse<AgentConfig>> {
     return this.client.patch<AgentConfig>(`/ai/agents/${agentId}`, agentData);
+  }
+
   async createAgent(agentData: {
     name: string;
     agent_type: string;
@@ -109,19 +124,22 @@ export class AIService {
     return this.client.get<AgentStats>("/ai/agents/stats");
   }
 
-  async getTaskLogs(taskId: string): Promise<ApiResponse<{
-    logs: Array<{
-      timestamp: string;
-      level: "INFO" | "WARN" | "ERROR";
-      message: string;
-    }>;
-  }>> {
+  async getTaskLogs(taskId: string): Promise<
+    ApiResponse<{
+      logs: Array<{
+        timestamp: string;
+        level: "INFO" | "WARN" | "ERROR";
+        message: string;
+      }>;
+    }>
+  > {
     return this.client.get<{
       logs: Array<{
         timestamp: string;
         level: "INFO" | "WARN" | "ERROR";
         message: string;
-      }>>(`/ai/agents/tasks/${taskId}/logs`);
+      }>;
+    }>(`/ai/agents/tasks/${taskId}/logs`);
   }
 }
 

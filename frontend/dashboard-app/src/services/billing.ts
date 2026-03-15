@@ -1,4 +1,9 @@
-import { apiClient } from "./index";
+import { api, ApiResponse } from "../../../lib/api";
+
+// Query parameters type
+interface QueryParams {
+  [key: string]: any;
+}
 
 // Billing Service Types
 export interface CreateInvoiceRequest {
@@ -56,7 +61,6 @@ export interface Invoice {
   }>;
   created_at: string;
   updated_at: string;
-  due_date: string;
   paid_at?: string;
   cancelled_at?: string;
   metadata?: Record<string, any>;
@@ -92,9 +96,11 @@ export interface BillingStats {
 
 // Billing Service API Methods
 export class BillingService {
-  private client = apiClient;
+  private client = api;
 
-  async createInvoice(invoiceData: CreateInvoiceRequest): Promise<ApiResponse<Invoice>> {
+  async createInvoice(
+    invoiceData: CreateInvoiceRequest,
+  ): Promise<ApiResponse<Invoice>> {
     return this.client.post<Invoice>("/billing/invoices", invoiceData);
   }
 
@@ -102,8 +108,14 @@ export class BillingService {
     return this.client.get<Invoice>(`/billing/invoices/${invoiceId}`);
   }
 
-  async updateInvoice(invoiceId: string, invoiceData: Partial<Invoice>): Promise<ApiResponse<Invoice>> {
-    return this.client.patch<Invoice>(`/billing/invoices/${invoiceId}`, invoiceData);
+  async updateInvoice(
+    invoiceId: string,
+    invoiceData: Partial<Invoice>,
+  ): Promise<ApiResponse<Invoice>> {
+    return this.client.patch<Invoice>(
+      `/billing/invoices/${invoiceId}`,
+      invoiceData,
+    );
   }
 
   async deleteInvoice(invoiceId: string): Promise<ApiResponse<null>> {
@@ -118,7 +130,9 @@ export class BillingService {
     return this.client.get<BillingStats>("/billing/stats");
   }
 
-  async processPayment(paymentData: PaymentRequest): Promise<ApiResponse<PaymentResponse>> {
+  async processPayment(
+    paymentData: PaymentRequest,
+  ): Promise<ApiResponse<PaymentResponse>> {
     return this.client.post<PaymentResponse>("/billing/payments", paymentData);
   }
 
@@ -126,7 +140,9 @@ export class BillingService {
     return this.client.get<PaymentResponse>(`/billing/payments/${paymentId}`);
   }
 
-  async listPayments(params?: QueryParams): Promise<ApiResponse<PaymentResponse[]>> {
+  async listPayments(
+    params?: QueryParams,
+  ): Promise<ApiResponse<PaymentResponse[]>> {
     return this.client.get<PaymentResponse[]>("/billing/payments", params);
   }
 
@@ -136,19 +152,36 @@ export class BillingService {
     billing_cycle: "monthly" | "yearly";
     features: string[];
   }): Promise<ApiResponse<Subscription>> {
-    return this.client.post<Subscription>("/billing/subscriptions", subscriptionData);
+    return this.client.post<Subscription>(
+      "/billing/subscriptions",
+      subscriptionData,
+    );
   }
 
-  async getSubscription(subscriptionId: string): Promise<ApiResponse<Subscription>> {
-    return this.client.get<Subscription>(`/billing/subscriptions/${subscriptionId}`);
+  async getSubscription(
+    subscriptionId: string,
+  ): Promise<ApiResponse<Subscription>> {
+    return this.client.get<Subscription>(
+      `/billing/subscriptions/${subscriptionId}`,
+    );
   }
 
-  async updateSubscription(subscriptionId: string, subscriptionData: Partial<Subscription>): Promise<ApiResponse<Subscription>> {
-    return this.client.patch<Subscription>(`/billing/subscriptions/${subscriptionId}`, subscriptionData);
+  async updateSubscription(
+    subscriptionId: string,
+    subscriptionData: Partial<Subscription>,
+  ): Promise<ApiResponse<Subscription>> {
+    return this.client.patch<Subscription>(
+      `/billing/subscriptions/${subscriptionId}`,
+      subscriptionData,
+    );
   }
 
-  async cancelSubscription(subscriptionId: string): Promise<ApiResponse<Subscription>> {
-    return this.client.post<Subscription>(`/billing/subscriptions/${subscriptionId}/cancel`);
+  async cancelSubscription(
+    subscriptionId: string,
+  ): Promise<ApiResponse<Subscription>> {
+    return this.client.post<Subscription>(
+      `/billing/subscriptions/${subscriptionId}/cancel`,
+    );
   }
 
   async getBillingStats(): Promise<ApiResponse<BillingStats>> {

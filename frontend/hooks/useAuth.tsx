@@ -19,6 +19,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   register: (userData: any) => Promise<void>;
   refreshToken: () => Promise<void>;
+  checkAuthStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -183,13 +184,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const checkAuthStatus = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      await validateToken(token);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     loading,
     login,
     logout,
     register,
-    refreshToken
+    refreshToken,
+    checkAuthStatus,
   };
 
   return (

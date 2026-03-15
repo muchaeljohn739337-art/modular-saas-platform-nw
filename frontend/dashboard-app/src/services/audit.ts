@@ -1,4 +1,4 @@
-import { apiClient } from "./index";
+import { api, ApiResponse } from "../../../lib/api";
 
 // Audit Log Service Types
 export interface AuditLog {
@@ -73,7 +73,7 @@ interface ComplianceReport {
 
 // Audit Log Service API Methods
 export class AuditLogService {
-  private client = apiClient;
+  private client = api;
 
   async createAuditLog(logData: {
     tenant_id: string;
@@ -96,7 +96,11 @@ export class AuditLogService {
     return this.client.get<AuditLog[]>("/audit/logs", params);
   }
 
-  async getAuditStats(params?: {
+  async getAuditStats({
+    tenant_id,
+    date_from,
+    date_to,
+  }: {
     tenant_id?: string;
     date_from?: string;
     date_to?: string;
@@ -104,17 +108,19 @@ export class AuditLogService {
     return this.client.get<AuditStatistics>("/audit/stats", {
       tenant_id,
       date_from,
-      date_to
+      date_to,
     });
   }
 
-  async exportAuditLogs(exportData: AuditExport): Promise<ApiResponse<{
-    download_url: string;
-  message: string;
-  }>> {
+  async exportAuditLogs(exportData: AuditExport): Promise<
+    ApiResponse<{
+      download_url: string;
+      message: string;
+    }>
+  > {
     return this.client.post<{
-      download_url: exportData.download_url,
-      message: exportData.message
+      download_url: string;
+      message: string;
     }>("/audit/logs/export", exportData);
   }
 
@@ -122,22 +128,31 @@ export class AuditLogService {
     type?: string;
     status?: string;
   }): Promise<ApiResponse<ComplianceReport[]>> {
-    return this.client.get<ComplianceReport[]>("/audit/compliance", {
-      type,
-      status
-    });
+    return this.client.get<ComplianceReport[]>("/audit/compliance", params);
   }
 
-  async getComplianceReport(reportId: string): Promise<ComplianceReport>> {
+  async getComplianceReport(
+    reportId: string,
+  ): Promise<ApiResponse<ComplianceReport>> {
     return this.client.get<ComplianceReport>(`/audit/compliance/${reportId}`);
   }
 
-  async updateComplianceReport(reportId: string, reportData: Partial<ComplianceReport>): Promise<ComplianceReport>> {
-    return this.client.patch<ComplianceReport>(`/audit/compliance/${reportId}`, reportData);
+  async updateComplianceReport(
+    reportId: string,
+    reportData: Partial<ComplianceReport>,
+  ): Promise<ApiResponse<ComplianceReport>> {
+    return this.client.patch<ComplianceReport>(
+      `/audit/compliance/${reportId}`,
+      reportData,
+    );
   }
 
-  async deleteComplianceReport(reportId: string): Promise<ComplianceReport>> {
-    return this.client.delete<ComplianceReport>(`/audit/compliance/${reportId}`);
+  async deleteComplianceReport(
+    reportId: string,
+  ): Promise<ApiResponse<ComplianceReport>> {
+    return this.client.delete<ComplianceReport>(
+      `/audit/compliance/${reportId}`,
+    );
   }
 
   async searchAuditLogs(searchParams: {
@@ -161,12 +176,21 @@ export class AuditLogService {
     return this.client.get<AuditLog[]>("/audit/trail", params);
   }
 
-  async getAuditTrailByTenant(tenantId: string, params?: QueryParams): Promise<ApiResponse<AuditLog[]>> {
-    return this.client.get<AuditLog[]>("/audit/tenants/${tenantId}/logs`, params);
+  async getAuditTrailByTenant(
+    tenantId: string,
+    params?: AuditQuery,
+  ): Promise<ApiResponse<AuditLog[]>> {
+    return this.client.get<AuditLog[]>(
+      `/audit/tenants/${tenantId}/logs`,
+      params,
+    );
   }
 
-  async getAuditTrailByUser(userId: string, params?: QueryParams): Promise<ApiResponse<AuditLog[]>> {
-    return this.client.get<AuditLog[]>("/audit/users/${userId}/logs`, params);
+  async getAuditTrailByUser(
+    userId: string,
+    params?: AuditQuery,
+  ): Promise<ApiResponse<AuditLog[]>> {
+    return this.client.get<AuditLog[]>(`/audit/users/${userId}/logs`, params);
   }
 }
 

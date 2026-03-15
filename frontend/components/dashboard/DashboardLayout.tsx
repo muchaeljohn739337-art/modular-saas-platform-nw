@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -13,7 +13,11 @@ import {
   Bell,
   Search
 } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+
+interface User {
+  name: string;
+  role: string;
+}
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -30,12 +34,31 @@ const navigation = [
 
 export default function DashboardLayout({ children, title = 'Dashboard' }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    // Get user from localStorage
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      // Try to parse user info from token or fetch it
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUser({
+          name: payload.email || "User",
+          role: payload.role || "USER",
+        });
+      } catch {
+        setUser({ name: "User", role: "USER" });
+      }
+    }
+  }, []);
 
   const handleLogout = async () => {
     try {
-      await logout();
-      window.location.href = '/login';
+      // Clear tokens
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/login";
     } catch (error) {
       console.error('Logout failed:', error);
     }

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import DashboardLayout from '../../../components/dashboard/DashboardLayout';
-import PaymentProcessing from '../../../components/dashboard/PaymentProcessing';
+import DashboardLayout from "../../components/dashboard/DashboardLayout";
+import PaymentProcessing from "../../components/dashboard/PaymentProcessing";
 
 export default function PaymentsPage() {
   return (

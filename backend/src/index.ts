@@ -4,6 +4,21 @@ import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
 
+// Import new services
+import { setupSwagger } from "./config/swagger";
+import { metricsMiddleware } from "./services/metrics";
+import metricsRouter from "./routes/metrics";
+import kycRouter from "./routes/kyc";
+import { createAuthRoutes } from "./routes/auth/authRoutes";
+import { createTenantRoutes } from "./routes/tenant/tenantRoutes";
+import { AuthController } from "./controllers/auth/authController";
+import { TenantController } from "./controllers/tenant/tenantController";
+import { AuthService } from "./services/auth/authService";
+import { TenantService } from "./services/tenant/tenantService";
+import { PrismaClient } from "@prisma/client";
+import { Redis } from "ioredis";
+import { EventBus } from "./services/eventBus/eventBus";
+
 // Load environment variables
 dotenv.config();
 
@@ -14,8 +29,17 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(morgan("combined"));
+
+// Metrics collection (add early in middleware chain)
+app.use(metricsMiddleware);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// API Documentation (Swagger)
+if (process.env.NODE_ENV !== "production" || process.env.ENABLE_DOCS === "true") {
+  setupSwagger(app);
+}
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -54,6 +78,23 @@ app.get("/api/db-test", (req, res) => {
     redis_url: process.env.REDIS_URL ? "Set" : "Not set",
   });
 });
+
+// Initialize services and controllers
+const prisma = new PrismaClient();
+const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+const eventBus = new EventBus(redis);
+
+const authService = new AuthService(prisma, redis, eventBus);
+const tenantService = new TenantService(prisma, redis, eventBus);
+
+const authController = new AuthController(authService);
+const tenantController = new TenantController(tenantService);
+
+// New API routes
+app.use("/api/metrics", metricsRouter);
+app.use("/api/kyc", kycRouter);
+app.use("/api/auth", createAuthRoutes(authController));
+app.use("/api/tenants", createTenantRoutes(tenantController));
 
 // Error handling middleware
 app.use(

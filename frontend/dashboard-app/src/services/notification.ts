@@ -1,4 +1,9 @@
-import { apiClient } from "./index";
+import { api, ApiResponse } from "../../../lib/api";
+
+// Query parameters type
+interface QueryParams {
+  [key: string]: any;
+}
 
 // Notification Service Types
 export interface NotificationTemplate {
@@ -74,7 +79,7 @@ export interface NotificationChannel {
 
 // Notification Service API Methods
 export class NotificationService {
-  private client = apiClient;
+  private client = api;
 
   async sendNotification(notificationData: NotificationRequest): Promise<Notification>> {
     return this.client.post<Notification>("/notifications/send", notificationData);

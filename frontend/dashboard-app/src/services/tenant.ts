@@ -1,4 +1,9 @@
-import { apiClient } from "./index";
+import { api, ApiResponse } from "../../../lib/api";
+
+// Query parameters type
+interface QueryParams {
+  [key: string]: any;
+}
 
 // Tenant Service Types
 export interface CreateTenantRequest {
@@ -63,9 +68,11 @@ export interface TenantStats {
 
 // Tenant Service API Methods
 export class TenantService {
-  private client = apiClient;
+  private client = api;
 
-  async createTenant(tenantData: CreateTenantRequest): Promise<ApiResponse<Tenant>> {
+  async createTenant(
+    tenantData: CreateTenantRequest,
+  ): Promise<ApiResponse<Tenant>> {
     return this.client.post<Tenant>("/tenant", tenantData);
   }
 
@@ -73,7 +80,10 @@ export class TenantService {
     return this.client.get<Tenant>(`/tenant/${tenantId}`);
   }
 
-  async updateTenant(tenantId: string, tenantData: UpdateTenantRequest): Promise<ApiResponse<Tenant>> {
+  async updateTenant(
+    tenantId: string,
+    tenantData: UpdateTenantRequest,
+  ): Promise<ApiResponse<Tenant>> {
     return this.client.patch<Tenant>(`/tenant/${tenantId}`, tenantData);
   }
 
@@ -89,11 +99,17 @@ export class TenantService {
     return this.client.get<TenantStats>("/tenant/stats");
   }
 
-  async getTenantUsers(tenantId: string, params?: QueryParams): Promise<ApiResponse<any[]>> {
+  async getTenantUsers(
+    tenantId: string,
+    params?: QueryParams,
+  ): Promise<ApiResponse<any[]>> {
     return this.client.get<any[]>(`/tenant/${tenantId}/users`, params);
   }
 
-  async upgradeTenant(tenantId: string, plan: string): Promise<ApiResponse<Tenant>> {
+  async upgradeTenant(
+    tenantId: string,
+    plan: string,
+  ): Promise<ApiResponse<Tenant>> {
     return this.client.post<Tenant>(`/tenant/${tenantId}/upgrade`, { plan });
   }
 

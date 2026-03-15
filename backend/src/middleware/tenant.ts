@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { TenantService } from '../services/tenant/tenantService';
-import { ApiResponse } from '../utils/apiResponse';
-import { logger } from '../utils/logger';
+import logger from "../utils/logger";
+import { AuthenticatedRequest } from "../middleware/auth";
+import { ApiResponse } from "../utils/apiResponse";
 
 export interface TenantRequest extends Request {
   tenantId?: string;
@@ -9,12 +10,16 @@ export interface TenantRequest extends Request {
 }
 
 export const resolveTenantFromDomain = (tenantService: TenantService) => {
-  return async (req: TenantRequest, res: Response, next: NextFunction): Promise<void> => {
+  return async (
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
       const host = req.headers.host;
-      const subdomain = host?.split('.')[0];
+      const subdomain = host?.split(".")[0];
 
-      if (!subdomain || subdomain === 'www' || subdomain === 'api') {
+      if (!subdomain || subdomain === "www" || subdomain === "api") {
         // No tenant context needed for main domain
         next();
         return;
@@ -23,12 +28,12 @@ export const resolveTenantFromDomain = (tenantService: TenantService) => {
       const tenant = await tenantService.getTenantByDomain(subdomain);
 
       if (!tenant) {
-        ApiResponse.notFound(res, 'Tenant not found');
+        ApiResponse.notFound(res, "Tenant not found");
         return;
       }
 
-      if (tenant.status !== 'ACTIVE') {
-        ApiResponse.forbidden(res, 'Tenant is not active');
+      if (tenant.status !== "ACTIVE") {
+        ApiResponse.forbidden(res, "Tenant is not active");
         return;
       }
 
@@ -37,16 +42,20 @@ export const resolveTenantFromDomain = (tenantService: TenantService) => {
 
       next();
     } catch (error) {
-      logger.error('Tenant resolution error:', error);
-      ApiResponse.internalError(res, 'Failed to resolve tenant');
+      logger.error("Tenant resolution error:", error);
+      ApiResponse.internalError(res, "Failed to resolve tenant");
     }
   };
 };
 
 export const resolveTenantFromHeader = (tenantService: TenantService) => {
-  return async (req: TenantRequest, res: Response, next: NextFunction): Promise<void> => {
+  return async (
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
-      const tenantId = req.headers['x-tenant-id'] as string;
+      const tenantId = req.headers["x-tenant-id"] as string;
 
       if (!tenantId) {
         // Try to get from subdomain
@@ -56,12 +65,12 @@ export const resolveTenantFromHeader = (tenantService: TenantService) => {
       const tenant = await tenantService.getTenantById(tenantId);
 
       if (!tenant) {
-        ApiResponse.notFound(res, 'Tenant not found');
+        ApiResponse.notFound(res, "Tenant not found");
         return;
       }
 
-      if (tenant.status !== 'ACTIVE') {
-        ApiResponse.forbidden(res, 'Tenant is not active');
+      if (tenant.status !== "ACTIVE") {
+        ApiResponse.forbidden(res, "Tenant is not active");
         return;
       }
 
@@ -70,15 +79,19 @@ export const resolveTenantFromHeader = (tenantService: TenantService) => {
 
       next();
     } catch (error) {
-      logger.error('Tenant resolution error:', error);
-      ApiResponse.internalError(res, 'Failed to resolve tenant');
+      logger.error("Tenant resolution error:", error);
+      ApiResponse.internalError(res, "Failed to resolve tenant");
     }
   };
 };
 
-export const requireTenant = (req: TenantRequest, res: Response, next: NextFunction): void => {
+export const requireTenant = (
+  req: TenantRequest,
+  res: Response,
+  next: NextFunction,
+): void => {
   if (!req.tenantId) {
-    ApiResponse.badRequest(res, 'Tenant context required');
+    ApiResponse.badRequest(res, "Tenant context required");
     return;
   }
 
@@ -86,59 +99,67 @@ export const requireTenant = (req: TenantRequest, res: Response, next: NextFunct
 };
 
 export const checkTenantLimits = (tenantService: TenantService) => {
-  return async (req: TenantRequest, res: Response, next: NextFunction): Promise<void> => {
+  return async (
+    req: TenantRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
       if (!req.tenantId) {
-        ApiResponse.badRequest(res, 'Tenant context required');
+        ApiResponse.badRequest(res, "Tenant context required");
         return;
       }
 
       const tenant = await tenantService.getTenantById(req.tenantId);
-      
+
       if (!tenant) {
-        ApiResponse.notFound(res, 'Tenant not found');
+        ApiResponse.notFound(res, "Tenant not found");
         return;
       }
 
-      const settings = tenant.settings || {};
+      const settings = tenant.settings || ({} as any);
       const now = Date.now();
 
       // Check API rate limits
       const apiLimitKey = `tenant:${req.tenantId}:api_calls:${Math.floor(now / (60 * 60 * 1000))}`; // Hourly
-      const currentApiCalls = await tenantService['redis']?.get(apiLimitKey) || '0';
-      
-      if (parseInt(currentApiCalls) >= settings.apiRateLimit) {
-        ApiResponse.tooManyRequests(res, 'API rate limit exceeded');
+      const currentApiCalls =
+        (await tenantService["redis"]?.get(apiLimitKey)) || "0";
+
+      if (parseInt(currentApiCalls) >= (settings.apiRateLimit || 1000)) {
+        ApiResponse.tooManyRequests(res, "API rate limit exceeded");
         return;
       }
 
       // Check storage limits (for upload endpoints)
-      if (req.method === 'POST' && req.path.includes('/upload')) {
+      if (req.method === "POST" && req.path.includes("/upload")) {
         const storageUsed = await tenantService.getStorageUsed(req.tenantId);
-        
-        if (storageUsed >= settings.maxStorage) {
-          ApiResponse.forbidden(res, 'Storage limit exceeded');
+
+        if (storageUsed >= (settings.maxStorage || 1000000000)) {
+          ApiResponse.forbidden(res, "Storage limit exceeded");
           return;
         }
       }
 
       // Check user limits (for user creation endpoints)
-      if (req.method === 'POST' && req.path.includes('/users')) {
+      if (req.method === "POST" && req.path.includes("/users")) {
         const metrics = await tenantService.getTenantMetrics(req.tenantId);
-        
-        if (settings.maxUsers > 0 && metrics.totalUsers >= settings.maxUsers) {
-          ApiResponse.forbidden(res, 'User limit exceeded');
+
+        if (
+          (settings.maxUsers || 100) > 0 &&
+          metrics.totalUsers >= (settings.maxUsers || 100)
+        ) {
+          ApiResponse.forbidden(res, "User limit exceeded");
           return;
         }
       }
 
       // Increment API call counter
-      await tenantService['redis']?.incr(apiLimitKey);
-      await tenantService['redis']?.expire(apiLimitKey, 60 * 60); // 1 hour
+      await tenantService["redis"]?.incr(apiLimitKey);
+      await tenantService["redis"]?.expire(apiLimitKey, 60 * 60); // 1 hour
 
       next();
     } catch (error) {
-      logger.error('Tenant limits check error:', error);
+      logger.error("Tenant limits check error:", error);
       next(error);
     }
   };
