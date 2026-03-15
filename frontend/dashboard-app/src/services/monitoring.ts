@@ -1,11 +1,23 @@
-import { apiClient } from "./index";
+import { api, ApiResponse } from "../../../lib/api";
+
+// Query parameters type
+interface QueryParams {
+  [key: string]: any;
+}
 
 // Monitoring Service Types
 export interface SystemMetric {
   id: string;
   name: string;
   service: string;
-  type: "cpu" | "memory" | "disk" | "network" | "response_time" | "error_rate" | "custom";
+  type:
+    | "cpu"
+    | "memory"
+    | "disk"
+    | "network"
+    | "response_time"
+    | "error_rate"
+    | "custom";
   current_value: number;
   threshold: number;
   unit: string;
@@ -21,7 +33,13 @@ export interface SystemMetric {
 export interface Alert {
   id: string;
   tenant_id: string;
-  type: "security" | "performance" | "billing" | "api" | "system" | "compliance";
+  type:
+    | "security"
+    | "performance"
+    | "billing"
+    | "api"
+    | "system"
+    | "compliance";
   severity: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
@@ -77,7 +95,7 @@ export interface AlertRule {
 
 // Monitoring Service API Methods
 export class MonitoringService {
-  private client = apiClient;
+  private client = api;
 
   async getMetrics(params?: QueryParams): Promise<ApiResponse<SystemMetric[]>> {
     return this.client.get<SystemMetric[]>("/monitoring/metrics", params);
@@ -91,7 +109,7 @@ export class MonitoringService {
     return this.client.get<Alert[]>("/monitoring/alerts", params);
   }
 
-  async getAlert(alertId: string): Promise<Alert>> {
+  async getAlert(alertId: string): Promise<ApiResponse<Alert>> {
     return this.client.get<Alert>(`/monitoring/alerts/${alertId}`);
   }
 
@@ -107,15 +125,20 @@ export class MonitoringService {
     return this.client.post<Alert>("/monitoring/alerts", alertData);
   }
 
-  async updateAlert(alertId: string, alertData: Partial<Alert>): Promise<Alert>> {
+  async updateAlert(
+    alertId: string,
+    alertData: Partial<Alert>,
+  ): Promise<ApiResponse<Alert>> {
     return this.client.patch<Alert>(`/monitoring/alerts/${alertId}`, alertData);
-  async resolveAlert(alertId: string): Promise<Alert>> {
+  }
+
+  async resolveAlert(alertId: string): Promise<ApiResponse<Alert>> {
     return this.client.post<Alert>(`/monitoring/alerts/${alertId}/resolve`, {
-      resolution: "Auto-resolved by system"
+      resolution: "Auto-resolved by system",
     });
   }
 
-  async deleteAlert(alertId: string): Promise<Alert>> {
+  async deleteAlert(alertId: string): Promise<ApiResponse<Alert>> {
     return this.client.delete<Alert>(`/monitoring/alerts/${alertId}`);
   }
 
@@ -123,7 +146,7 @@ export class MonitoringService {
     return this.client.get<HealthCheck[]>("/monitoring/health");
   }
 
-  async getMonitoringStats(): Promise<MonitoringStats>> {
+  async getMonitoringStats(): Promise<ApiResponse<MonitoringStats>> {
     return this.client.get<MonitoringStats>("/monitoring/stats");
   }
 
@@ -140,19 +163,27 @@ export class MonitoringService {
     return this.client.post<AlertRule>("/monitoring/alert-rules", ruleData);
   }
 
-  async listAlertRules(params?: QueryParams): Promise<AlertRule[]> {
+  async listAlertRules(
+    params?: QueryParams,
+  ): Promise<ApiResponse<AlertRule[]>> {
     return this.client.get<AlertRule[]>("/monitoring/alert-rules", params);
   }
 
-  async getAlertRule(ruleId: string): Promise<AlertRule>> {
+  async getAlertRule(ruleId: string): Promise<ApiResponse<AlertRule>> {
     return this.client.get<AlertRule>(`/monitoring/alert-rules/${ruleId}`);
   }
 
-  async updateAlertRule(ruleId: string, ruleData: Partial<AlertRule>): Promise<AlertRule>> {
-    return this.client.patch<AlertRule>(`/monitoring/alert-rules/${ruleId}`, ruleData);
+  async updateAlertRule(
+    ruleId: string,
+    ruleData: Partial<AlertRule>,
+  ): Promise<ApiResponse<AlertRule>> {
+    return this.client.patch<AlertRule>(
+      `/monitoring/alert-rules/${ruleId}`,
+      ruleData,
+    );
   }
 
-  deleteAlertRule(ruleId: string): Promise<AlertRule>> {
+  async deleteAlertRule(ruleId: string): Promise<ApiResponse<AlertRule>> {
     return this.client.delete<AlertRule>(`/monitoring/alert-rules/${ruleId}`);
   }
 }

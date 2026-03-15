@@ -36,6 +36,7 @@
 - [ ] Test: `curl -L -I https://advanciapayroll.com` shows final URL
 
 **Redirect Table**:
+
 | From | To | Type |
 |------|-----|------|
 | advanciapayroll.com | https://advanciapayledger.com | 301 |
@@ -149,6 +150,7 @@
 - [ ] Verify all security settings are active
 
 **Security Settings Table**:
+
 | Setting | Value | Status |
 |---------|-------|--------|
 | SSL/TLS | Full (strict) | ⏳ PENDING |

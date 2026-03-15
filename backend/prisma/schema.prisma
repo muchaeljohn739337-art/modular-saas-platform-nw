@@ -21,6 +21,7 @@ model User {
   lastLoginAt   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  password      String?   // Added for custom auth
 
   // Relations
   patient   Patient?
@@ -29,6 +30,7 @@ model User {
   accounts  Account[]
   sessions  Session[]
   auditLogs AuditLog[]
+  tenantMemberships TenantMember[]
 
   @@map("users")
 }
@@ -154,6 +156,7 @@ model Invoice {
   patientId     String
   providerId    String
   accountId     String
+  tenantId      String?
   totalAmount   Decimal       @db.Decimal(12, 2)
   amountPaid    Decimal       @default(0.00) @db.Decimal(12, 2)
   balance       Decimal       @db.Decimal(12, 2)
@@ -166,6 +169,7 @@ model Invoice {
   patient  Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
   provider Provider      @relation(fields: [providerId], references: [id], onDelete: Cascade)
   account  Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  tenant   Tenant?       @relation(fields: [tenantId], references: [id], onDelete: SetNull)
   items    InvoiceItem[]
   payments Payment[]
   claims   Claim[]
@@ -194,6 +198,7 @@ model Payment {
   patientId         String
   invoiceId         String?
   accountId         String
+  tenantId          String?
   amount            Decimal       @db.Decimal(12, 2)
   method            PaymentMethod
   status            PaymentStatus @default(PENDING)
@@ -206,6 +211,7 @@ model Payment {
   patient Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
   invoice Invoice? @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   account Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  tenant  Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
 
   @@map("payments")
 }
@@ -216,6 +222,7 @@ model Claim {
   patientId      String
   providerId     String
   invoiceId      String
+  tenantId       String?
   totalAmount    Decimal     @db.Decimal(12, 2)
   approvedAmount Decimal?    @db.Decimal(12, 2)
   status         ClaimStatus @default(DRAFT)
@@ -228,6 +235,7 @@ model Claim {
   patient  Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
   provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   invoice  Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  tenant   Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
 
   @@map("claims")
 }
@@ -236,6 +244,7 @@ model Claim {
 model AuditLog {
   id         String   @id @default(cuid())
   userId     String?
+  tenantId   String?
   action     String
   resource   String
   resourceId String?
@@ -245,9 +254,55 @@ model AuditLog {
   userAgent  String?
   createdAt  DateTime @default(now())
 
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
 
   @@map("audit_logs")
+}
+
+// Tenant management
+model Tenant {
+  id          String        @id @default(cuid())
+  name        String
+  domain      String        @unique
+  plan        TenantPlan    @default(BASIC)
+  status      TenantStatus  @default(ACTIVE)
+  settings    Json?
+  metadata    Json?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  users       TenantMember[]
+  invoices    Invoice[]
+  payments    Payment[]
+  claims      Claim[]
+  auditLogs   AuditLog[]
+
+  @@map("tenants")
+}
+
+model TenantMember {
+  id        String            @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      TenantMemberRole  @default(MEMBER)
+  joinedAt  DateTime          @default(now())
+  isActive  Boolean           @default(true)
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@map("tenant_members")
+}
+
+enum TenantMemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
 }
 
 // Enums
@@ -257,6 +312,20 @@ enum UserRole {
   STAFF
   ADMIN
   SUPER_ADMIN
+}
+
+enum TenantPlan {
+  BASIC
+  PROFESSIONAL
+  ENTERPRISE
+  CUSTOM
+}
+
+enum TenantStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING
 }
 
 enum Gender {

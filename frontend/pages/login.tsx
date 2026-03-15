@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import { useAuth } from '../hooks/useAuth';
+import { useRouter } from "next/router";
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
@@ -14,27 +13,48 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields");
       return;
     }
 
     try {
       setLoading(true);
-      setError('');
-      
-      await login(formData.email, formData.password);
-      
+      setError("");
+
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Store tokens
+      localStorage.setItem("accessToken", data.data.accessToken);
+      localStorage.setItem(
+        "refreshToken",
+        data.data.tokens?.refreshToken || "",
+      );
+
       // Redirect to dashboard
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Login failed');
+      setError(error instanceof Error ? error.message : "Login failed");
     } finally {
       setLoading(false);
     }

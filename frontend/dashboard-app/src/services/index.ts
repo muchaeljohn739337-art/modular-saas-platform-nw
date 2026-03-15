@@ -1,3 +1,14 @@
+// Import all service clients
+import { authService } from "./auth";
+import { tenantService } from "./tenant";
+import { billingService } from "./billing";
+import { web3Service } from "./web3";
+import { aiService } from "./ai";
+import { monitoringService } from "./monitoring";
+import { securityService } from "./security";
+import { notificationService } from "./notification";
+import { auditLogService } from "./audit";
+
 // Export all service clients for easy importing
 export { authService } from "./auth";
 export { tenantService } from "./tenant";

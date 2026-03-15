@@ -1,5 +1,5 @@
 import { Redis } from 'ioredis';
-import { logger } from '../../utils/logger';
+import logger from "../../utils/logger";
 
 export interface Event {
   id: string;

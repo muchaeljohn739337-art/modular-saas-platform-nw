@@ -49,10 +49,8 @@ export class AuthService {
       data: {
         email: data.email,
         password: hashedPassword,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        role: data.role || UserRole.USER,
-        status: 'ACTIVE'
+        name: `${data.firstName} ${data.lastName}`,
+        role: data.role || UserRole.PATIENT
       }
     });
 
@@ -73,7 +71,7 @@ export class AuthService {
       timestamp: new Date()
     });
 
-    const { password, ...userWithoutPassword } = user;
+    const { password, ...userWithoutPassword } = user as any;
 
     return {
       user: userWithoutPassword,
@@ -90,13 +88,13 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+    const isPasswordValid = await bcrypt.compare(credentials.password, (user as any).password);
 
     if (!isPasswordValid) {
       throw new Error('Invalid credentials');
     }
 
-    if (user.status !== 'ACTIVE') {
+    if (!user.isActive) {
       throw new Error('Account is not active');
     }
 
@@ -116,7 +114,7 @@ export class AuthService {
       timestamp: new Date()
     });
 
-    const { password, ...userWithoutPassword } = user;
+    const { password, ...userWithoutPassword } = user as any;
 
     return {
       user: userWithoutPassword,
@@ -138,7 +136,7 @@ export class AuthService {
         where: { id: decoded.userId }
       });
 
-      if (!user || user.status !== 'ACTIVE') {
+      if (!user || !user.isActive) {
         throw new Error('User not found or inactive');
       }
 
@@ -176,17 +174,20 @@ export class AuthService {
       throw new Error('User not found');
     }
 
-    const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    const isOldPasswordValid = await bcrypt.compare(
+      oldPassword,
+      (user as any).password,
+    );
 
     if (!isOldPasswordValid) {
-      throw new Error('Invalid old password');
+      throw new Error("Invalid old password");
     }
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 12);
 
     await this.prisma.user.update({
       where: { id: userId },
-      data: { password: hashedNewPassword }
+      data: { password: hashedNewPassword } as any,
     });
 
     // Invalidate all refresh tokens for this user
@@ -249,7 +250,7 @@ export class AuthService {
 
       await this.prisma.user.update({
         where: { id: decoded.userId },
-        data: { password: hashedPassword }
+        data: { password: hashedPassword } as any
       });
 
       // Clean up reset token
@@ -308,7 +309,7 @@ export class AuthService {
       return null;
     }
 
-    const { password, ...userWithoutPassword } = user;
+    const { password, ...userWithoutPassword } = user as any;
     return userWithoutPassword;
   }
 

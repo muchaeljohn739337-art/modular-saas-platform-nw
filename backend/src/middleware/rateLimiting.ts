@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Redis } from 'ioredis';
 import { ApiResponse } from '../utils/apiResponse';
-import { logger } from '../utils/logger';
+import logger from '../utils/logger';
 
 export interface RateLimitConfig {
   windowMs: number; // Time window in milliseconds

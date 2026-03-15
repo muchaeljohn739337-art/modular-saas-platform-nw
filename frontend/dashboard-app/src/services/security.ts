@@ -1,4 +1,9 @@
-import { apiClient } from "./index";
+import { api, ApiResponse } from "../../../lib/api";
+
+// Query parameters type
+interface QueryParams {
+  [key: string]: any;
+}
 
 // Security Service Types
 export interface SecurityIncident {
@@ -87,7 +92,7 @@ export interface SecurityAlert {
 
 // Security Service API Methods
 export class SecurityService {
-  private client = apiClient;
+  private client = api;
 
   async createIncident(incidentData: {
     tenant_id?: string;
