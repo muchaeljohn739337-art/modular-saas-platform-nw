@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 // Simple Registration Page for Advancia PayLedger - Updated for redeploy
 export default function RegisterPage() {
   const handleSubmit = (e) => {
@@ -225,7 +227,7 @@ export default function RegisterPage() {
         <div style={{ marginTop: "24px", textAlign: "center" }}>
           <p style={{ fontSize: "14px", color: "#6b7280" }}>
             Already have an account?{" "}
-            <a
+            <Link
               href="/login"
               style={{
                 color: "#3b82f6",
@@ -234,7 +236,7 @@ export default function RegisterPage() {
               }}
             >
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </div>

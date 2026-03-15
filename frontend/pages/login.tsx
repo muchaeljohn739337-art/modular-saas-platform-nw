@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from "next/router";
+import Link from 'next/link';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
@@ -198,12 +199,12 @@ export default function LoginPage() {
               </div>
 
               <div className="mt-6">
-                <a
+                <Link
                   href="/register"
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Create an account
-                </a>
+                </Link>
               </div>
             </div>
           </form>
